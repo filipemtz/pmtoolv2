@@ -1,0 +1,14 @@
+<div class="task-view row row-cols-auto">
+    <div class="task-observation col-7">
+        {{ task.name }}
+    </div>
+    <div class="task-priority col-1">
+        {{ task.priority }}
+    </div>
+    <div class="task-workload col-2">
+        {{ workload_selector_html }}
+    </div>
+    <div class="task-status col-2">
+        {{ status_selector_html }}
+    </div>
+</div>
