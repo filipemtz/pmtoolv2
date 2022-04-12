@@ -25,31 +25,6 @@
         integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
     <link rel="stylesheet" href="//code.jquery.com/ui/1.13.1/themes/base/jquery-ui.css">
     <link href="{% static 'scrum/css/scrum.css' %}" rel="stylesheet">
-    <style>
-        #sortable {
-            list-style-type: none;
-            margin: 0;
-            padding: 0;
-            width: 60%;
-        }
-
-        #sortable li {
-            margin: 0 5px 5px 5px;
-            padding: 5px;
-            font-size: 1.2em;
-            height: 1.5em;
-        }
-
-        html>body #sortable li {
-            height: 1.5em;
-            line-height: 1.2em;
-        }
-
-        .ui-state-highlight {
-            height: 1.5em;
-            line-height: 1.2em;
-        }
-    </style>
 
 </head>
 
@@ -62,19 +37,21 @@
         <header
             class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom">
             <div class="d-flex align-items-center col-md-3 mb-2 mb-md-0 text-dark text-decoration-none">
-                <h4>{{project}}</h4>
+                <h4>{{ project_selector }}</h4>
             </div>
 
             <ul class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
             </ul>
 
             <div class="col-md-3 text-end">
-                <button type="button" class="btn btn-outline-primary me-2">new sprint</button>
+                <button type="button" class="btn btn-outline-primary me-2"
+                    onclick='append_new_empty_task_list({{ project.id }})'>new
+                    sprint</button>
             </div>
         </header>
     </div>
 
-    <div class="main-content">
+    <div class="main-content" id="task_lists">
         {% for task_list_html in task_lists_html %}
         {{ task_list_html }}
         {% endfor %}

@@ -1,4 +1,23 @@
 
+function append_new_empty_task_list(project_id) {
+    $.ajax({
+        method: "POST",
+        url: "empty_task_list",
+        mode: 'same-origin', // Do not send CSRF token to another domain.
+        data: {
+            'project_id': project_id,
+        }
+    }).done(function (data) {
+        $("#task_lists").prepend(data);
+        make_task_lists_sortable();
+    }).fail(function (data) {
+        $("#error").html(data);
+        $("#error").show();
+        $("#error").fadeOut(start = 5);
+    });
+}
+
+
 function append_new_empty_task(task_list_id) {
     $.ajax({
         method: "POST",
@@ -11,7 +30,6 @@ function append_new_empty_task(task_list_id) {
         form_name = "#task_list_" + task_list_id;
         $(form_name).find("#instructions").remove();
         $(form_name).find("#tasks").append(data);
-        //make_all_tasks_dragable();
     }).fail(function (data) {
         $("#error").html(data);
         $("#error").show();
@@ -33,6 +51,7 @@ function update_task_list(task_list_id, toggle_archived) {
         }
     }).done(function (data) {
         $(form_name).replaceWith(data);
+        make_task_lists_sortable();
     }).fail(function (data) {
         $("#error").html(data);
         $("#error").show();
@@ -40,30 +59,52 @@ function update_task_list(task_list_id, toggle_archived) {
 }
 
 function delete_task_list(task_list_id) {
-    alert("Not implemented yet.")
-    /*
-    form_name = "#task_list_" + task_list_id;
+    if (confirm("Tem certeza que deseja remover a lista de tarefas e todas as suas subtarefas?")) {
+        form_name = "#task_list_" + task_list_id;
+
+        $.ajax({
+            method: "POST",
+            url: "delete_task_list",
+            mode: 'same-origin', // Do not send CSRF token to another domain.
+            data: {
+                'task_list_id': task_list_id,
+            }
+        }).done(function (data) {
+            $(form_name).remove();
+        }).fail(function (data) {
+            $("#error").html(data);
+            $("#error").show();
+        });
+    }
+}
+
+
+function update_task_priorities(items) {
+    task_list = $("#" + items[0]).parent().parent().attr("id");
 
     $.ajax({
         method: "POST",
-        url: "delete_task_list",
+        url: "update_priorities",
         mode: 'same-origin', // Do not send CSRF token to another domain.
         data: {
-            'task_list_id': task_list_id,
+            'task_list_id': task_list,
+            'sorted_tasks': items,
         }
-    }).done(function (data) {
-        $(form_name).remove();
     }).fail(function (data) {
         $("#error").html(data);
         $("#error").show();
     });
-    */
 }
 
+
 function make_task_lists_sortable() {
-    $("#tasks").sortable({
-        update: function (event, ui) {
-            update_task_priorities($(this).sortable("toArray"));
-        }
+    $(".tasks").each(function (index) {
+        $(this).sortable({
+            connectWith: ".tasks",
+            update: function (event, ui) {
+                update_task_priorities($(this).sortable("toArray"));
+            }
+        })
+        $(this).disableSelection();
     });
 }

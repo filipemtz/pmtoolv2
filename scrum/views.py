@@ -95,27 +95,32 @@ def create_empty_task(request):
     return HttpResponse(render_task(task))
 
 
-def render_task_list(task_list: TaskList) -> str:
+def render_task_list(task_list: TaskList, template: str) -> str:
     subtasks = Task.objects.filter(placement=task_list)
     subtasks_html = [render_task(t) for t in subtasks]
-    task_list_html = loader.get_template('scrum/task_list.html').render({
+    task_list_html = loader.get_template(template).render({
         "task_list": task_list,
         "subtasks": subtasks_html,
     })
     return task_list_html
 
 
-def extract_int_id(task_html_id):
-    return int(task_html_id.replace("task_", ""))
+def extract_int_id(html_id):
+    return int(html_id.split("_")[-1])
 
 
 def update_priorities(request):
+    task_list_id = request.POST['task_list_id']
+    task_list_id = extract_int_id(task_list_id)
+    task_list = TaskList.objects.get(id=task_list_id)
+
     sorted_tasks = request.POST.getlist('sorted_tasks[]')
     ids = [extract_int_id(s) for s in sorted_tasks]
 
     for i in range(len(ids)):
         task = Task.objects.get(id=ids[i])
         task.priority = i + 1
+        task.placement = task_list
         task.save()
 
     return HttpResponse()
@@ -138,14 +143,39 @@ def delete_task_list(request):
     return HttpResponse()
 
 
+def empty_task_list(request):
+    project = get_object_or_404(Project, id=request.POST['project_id'])
+
+    task_list = TaskList(
+        name='Sprint',
+        created_at=timezone.now(),
+        project=project,
+        archived=False,
+    )
+
+    task_list.save()
+
+    return HttpResponse(render_task_list(task_list, 'scrum/sprint.html'))
+
+
 def index(request):
     project_id = 1
     project = get_object_or_404(Project, pk=project_id)
     task_lists = TaskList.objects.filter(project=project)
-    tasks_lists_html = [render_task_list(t) for t in task_lists]
+
+    tasks_lists_html = []
+
+    for i in range(len(task_lists)):
+        t = task_lists[i]
+        if i < len(task_lists) - 1:
+            tasks_lists_html.append(render_task_list(t, 'scrum/sprint.html'))
+        else:
+            tasks_lists_html.append(render_task_list(t, 'scrum/backlog.html'))
+
     project_html = project_selector(project_id)
 
     return render(request, 'scrum/index.html', {
-        'project': project_html,
+        'project': project,
+        'project_selector': project_html,
         'task_lists_html': tasks_lists_html,
     })

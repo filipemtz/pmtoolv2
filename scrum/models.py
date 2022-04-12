@@ -44,7 +44,7 @@ class TaskList(models.Model):
     end_date = models.DateTimeField(null=True)
 
     class Meta:
-        ordering = ['created_at']
+        ordering = ['-created_at']
 
     def __str__(self):
         return f"(name={self.name}, created_at={self.created_at}, project={self.project}, start={self.start_date}, end={self.end_date})"

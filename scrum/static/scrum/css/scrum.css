@@ -30,3 +30,8 @@
 .task-view.over {
     border: 3px dotted #666;
 }
+
+.tasks {
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
