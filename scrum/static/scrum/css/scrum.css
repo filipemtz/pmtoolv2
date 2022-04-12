@@ -11,10 +11,26 @@
     margin-right: 2%;
 }
 
-#error {
-    display: inline-block;
-    width: 100%;
-    background-color: "red";
+.navbar-toggler-icon {
+    font-size: 0.5em;
+}
+
+select,
+input,
+body {
+    font-size: 10pt;
+}
+
+.task-list-editor {
+    border: 1px solid #000;
+}
+
+.task-list-buttons,
+.task-buttons {
+    text-align: right;
+}
+
+#project {
     color: aliceblue;
 }
 

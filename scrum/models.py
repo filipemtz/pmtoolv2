@@ -29,10 +29,10 @@ class TaskWorkload(models.TextChoices):
 
 
 class TaskStatus(models.TextChoices):
-    TODO = 'TD', _('TODO')
-    IN_PROGRESS = 'IP', _('IN PROGRESS')
-    IN_REVIEW = 'RV', _('IN REVIEW')
-    DONE = 'DO', _('DONE')
+    TODO = 'TD', _('to do')
+    IN_PROGRESS = 'IP', _('in progress')
+    IN_REVIEW = 'RV', _('in review')
+    DONE = 'DO', _('done')
 
 
 class TaskList(models.Model):

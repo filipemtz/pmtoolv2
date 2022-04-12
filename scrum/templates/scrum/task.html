@@ -1,15 +1,15 @@
 <div class="task-view row row-cols-auto sortable draggable" id="task_{{ task.id }}">
-    <div class="task-name col-6">
+    <div class="task-name col-9">
         <input class='form-control-plaintext' type="text" name="name" id="name" style="width:100%;"
             value="{{ task.name }}" onkeypress="if (event.which == 13) save_task({{ task.id }});" />
     </div>
-    <div class="task-workload col-2 center">
+    <div class="task-workload col-1 center">
         {{ workload_selector_html }}
     </div>
-    <div class="task-status col-2 center">
+    <div class="task-status col-1 center">
         {{ status_selector_html }}
     </div>
-    <div class="task-buttons col-2 center">
-        <button onclick="delete_task({{ task.id }});"><i class='material-icons tiny'>delete</i></button>
+    <div class="task-buttons col-1 center">
+        <button class="btn" onclick="delete_task({{ task.id }});"><i class='material-icons tiny'>delete</i></button>
     </div>
 </div>

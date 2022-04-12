@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from django.utils import timezone
 from .models import Project, Task, TaskList, TaskStatus, TaskWorkload
 from django.views import View
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseNotFound
 from django.template import loader
 from django.shortcuts import get_object_or_404, render
 from typing import Dict, List
@@ -47,7 +47,7 @@ def project_selector(selected_value: int = -1):
     all_objs = Project.objects.all()
     options = [{'name': o.name, 'value': o.id,
                 'selected': selected_value == o.id} for o in all_objs]
-    onselect_event = "page_alert('multiproject is not implemented yet.', INFO_CLASS, fadeOutTime = 2);"
+    onselect_event = "page_alert('multiproject is not implemented yet', INFO_CLASS, fadeOutTime = 2);"
     return render_selector(options, name='project', id='project', onselect_event=onselect_event)
 
 
@@ -115,6 +115,9 @@ def extract_int_id(html_id):
 
 
 def update_priorities(request):
+    if 'task_list_id' not in request.POST:
+        return HttpResponseNotFound()
+
     task_list_id = request.POST['task_list_id']
     task_list_id = extract_int_id(task_list_id)
     task_list = TaskList.objects.get(id=task_list_id)
