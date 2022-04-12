@@ -1,0 +1,39 @@
+<div class="task-list-container" id="task_list_{{ task_list.id }}">
+
+    <div class="task-list-editor row row-cols-auto">
+        <div class="task-list-name col-5">
+            <input class='form-control-plaintext' type="text" name="name" id="name" value="{{ task_list.name }}" />
+        </div>
+        <div class="col-5 center"></div>
+        <div class="task-list-buttons col-2 center">
+            <button onclick="update_task_list({{ task_list.id }}, false);" title="save changes"><i
+                    class='material-icons tiny'>save</i></button>
+            <button onclick="delete_task_list({{ task_list.id }});" title="delete task list"><i
+                    class='material-icons tiny'>delete</i></button>
+            <button onclick="update_task_list({{ task_list.id }}, true);" title="archive task list">
+                {% if task_list.archived %}
+                <i class='material-icons tiny'>visibility_off</i>
+                {% else %}
+                <i class='material-icons tiny'>visibility</i>
+                {% endif%}
+            </button>
+        </div>
+    </div>
+
+    {% if not task_list.archived %}
+
+    <div id="tasks" class="tasks">
+        {% if subtasks %}
+        {% for task_html in subtasks %}
+        {{ task_html }}
+        {% endfor %}
+        {% endif %}
+    </div>
+
+    <div id='new_task_button' class="clickable" onclick="append_new_empty_task({{ task_list.id }});">
+        <i class='material-icons tiny'>add</i>
+    </div>
+
+    {% endif %}
+
+</div>
