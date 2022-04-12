@@ -11,9 +11,7 @@ function append_new_empty_task_list(project_id) {
         $("#task_lists").prepend(data);
         make_task_lists_sortable();
     }).fail(function (data) {
-        $("#error").html(data);
-        $("#error").show();
-        $("#error").fadeOut(start = 5);
+        page_alert('error', 'negative', fadeOutTime = 1);
     });
 }
 
@@ -31,9 +29,7 @@ function append_new_empty_task(task_list_id) {
         $(form_name).find("#instructions").remove();
         $(form_name).find("#tasks").append(data);
     }).fail(function (data) {
-        $("#error").html(data);
-        $("#error").show();
-        $("#error").fadeOut(start = 5);
+        page_alert('error', 'negative', fadeOutTime = 1);
     });
 }
 
@@ -52,9 +48,9 @@ function update_task_list(task_list_id, toggle_archived) {
     }).done(function (data) {
         $(form_name).replaceWith(data);
         make_task_lists_sortable();
+        page_alert('saved', 'positive', fadeOutTime = 0.5);
     }).fail(function (data) {
-        $("#error").html(data);
-        $("#error").show();
+        page_alert('error', 'negative', fadeOutTime = 1);
     });
 }
 
@@ -72,8 +68,7 @@ function delete_task_list(task_list_id) {
         }).done(function (data) {
             $(form_name).remove();
         }).fail(function (data) {
-            $("#error").html(data);
-            $("#error").show();
+            page_alert('error', 'negative', fadeOutTime = 1);
         });
     }
 }
@@ -91,8 +86,7 @@ function update_task_priorities(items) {
             'sorted_tasks': items,
         }
     }).fail(function (data) {
-        $("#error").html(data);
-        $("#error").show();
+        page_alert('error', 'negative', fadeOutTime = 1);
     });
 }
 

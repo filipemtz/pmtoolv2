@@ -1,7 +1,7 @@
 <div class="task-view row row-cols-auto sortable draggable" id="task_{{ task.id }}">
     <div class="task-name col-6">
         <input class='form-control-plaintext' type="text" name="name" id="name" style="width:100%;"
-            value="{{ task.name }}" />
+            value="{{ task.name }}" onkeypress="if (event.which == 13) save_task({{ task.id }});" />
     </div>
     <div class="task-workload col-2 center">
         {{ workload_selector_html }}

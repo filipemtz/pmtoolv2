@@ -134,7 +134,13 @@ def update_task_list(request):
         task_list.archived = not task_list.archived
 
     task_list.save()
-    return HttpResponse(render_task_list(task_list))
+
+    if (request.POST['task_list_id'] == 1):
+        template = 'scrum/backlog.html'
+    else:
+        template = 'scrum/sprint.html'
+
+    return HttpResponse(render_task_list(task_list, template))
 
 
 def delete_task_list(request):
