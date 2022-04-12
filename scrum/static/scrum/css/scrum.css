@@ -36,6 +36,10 @@
     padding-bottom: 10px;
 }
 
+.task-list-name {
+    font-weight: bold;
+}
+
 #feedback_box {
     position: fixed;
     left: 0px;
