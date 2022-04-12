@@ -37,11 +37,12 @@
 }
 
 #feedback_box {
-    position: absolute;
+    position: fixed;
     left: 0px;
-    top: 5%;
+    top: 90%;
     width: 100%;
-    text-align: center;
+    text-align: right;
+    padding-right: 5%;
 }
 
 #feedback_message {
@@ -51,19 +52,4 @@
     padding-right: 20px;
     padding-top: 5px;
     padding-bottom: 5px;
-}
-
-.positive {
-    border: 1px solid green;
-    color: green;
-}
-
-.negative {
-    border: 1px solid red;
-    color: red;
-}
-
-.warn {
-    border: 1px solid yellow;
-    color: darkorange;
 }

@@ -2,12 +2,11 @@
 
     <div class="task-list-editor row row-cols-auto">
         <div class="task-list-name col-5">
-            <input class='form-control-plaintext' type="text" name="name" id="name" value="{{ task_list.name }}" />
+            <input class='form-control-plaintext' type="text" name="name" id="name" value="{{ task_list.name }}"
+                onkeypress="if (event.which == 13) update_task_list({{ task_list.id }}, false);" />
         </div>
         <div class="col-5 center"></div>
         <div class="task-list-buttons col-2 center">
-            <button onclick="update_task_list({{ task_list.id }}, false);" title="save changes"><i
-                    class='material-icons tiny'>save</i></button>
             <button onclick="delete_task_list({{ task_list.id }});" title="delete task list"><i
                     class='material-icons tiny'>delete</i></button>
             <button onclick="update_task_list({{ task_list.id }}, true);" title="archive task list">
@@ -36,6 +35,5 @@
 
     {% endif %}
 
+    <br>
 </div>
-
-<br>

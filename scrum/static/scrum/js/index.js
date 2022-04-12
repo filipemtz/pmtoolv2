@@ -1,4 +1,9 @@
 
+SUCCESS_CLASS = 'btn-success'
+FAIL_CLASS = 'btn-danger'
+INFO_CLASS = 'btn-info'
+WARN_CLASS = 'btn-warning'
+
 function page_alert(message, style_class, fadeOutTime = -1) {
     $("#feedback_message").html(message);
     $("#feedback_message").removeClass();

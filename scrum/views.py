@@ -11,8 +11,11 @@ import traceback
 
 
 def render_task(task: Task) -> str:
-    status_selector_html = status_selector(selected_value=task.status)
-    workload_selector_html = workload_selector(selected_value=task.workload)
+    onselect_event = f"save_task({task.id});"
+    status_selector_html = status_selector(
+        selected_value=task.status, onselect_event=onselect_event)
+    workload_selector_html = workload_selector(
+        selected_value=task.workload, onselect_event=onselect_event)
 
     task_html = loader.get_template('scrum/task.html').render({
         "task": task,
@@ -23,34 +26,36 @@ def render_task(task: Task) -> str:
     return task_html
 
 
-def render_selector(options: List[Dict], name: str, id) -> str:
+def render_selector(options: List[Dict], name: str, id, onselect_event: str = '') -> str:
     status_selector_html = loader.get_template('scrum/selector.html').render({
         "name": name,
         "id": id,
         "options": options,
+        'onselect_event': onselect_event,
     })
     return status_selector_html
 
 
-def status_selector(selected_value: str = '') -> str:
+def status_selector(selected_value: str = '', onselect_event: str = '') -> str:
     all_status = TaskStatus.choices
     status_options = [{'name': s[1], 'value': s[0],
                        'selected': selected_value == s[0]} for s in all_status]
-    return render_selector(status_options, name='status', id='status')
+    return render_selector(status_options, name='status', id='status', onselect_event=onselect_event)
 
 
 def project_selector(selected_value: int = -1):
     all_objs = Project.objects.all()
     options = [{'name': o.name, 'value': o.id,
                 'selected': selected_value == o.id} for o in all_objs]
-    return render_selector(options, name='project', id='project')
+    onselect_event = "page_alert('multiproject is not implemented yet.', INFO_CLASS, fadeOutTime = 2);"
+    return render_selector(options, name='project', id='project', onselect_event=onselect_event)
 
 
-def workload_selector(selected_value: str = ''):
+def workload_selector(selected_value: str = '', onselect_event: str = ''):
     all_objs = TaskWorkload.choices
     options = [{'name': o[1], 'value': o[0],
                 'selected': selected_value == o[0]} for o in all_objs]
-    return render_selector(options, name='workload', id='workload')
+    return render_selector(options, name='workload', id='workload', onselect_event=onselect_event)
 
 
 def update_task(request):
@@ -135,7 +140,7 @@ def update_task_list(request):
 
     task_list.save()
 
-    if (request.POST['task_list_id'] == 1):
+    if (task_list.id == 1):
         template = 'scrum/backlog.html'
     else:
         template = 'scrum/sprint.html'

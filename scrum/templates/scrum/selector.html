@@ -1,4 +1,4 @@
-<select name="{{ name }}" id="{{ id }}" class='form-control-plaintext'>
+<select name="{{ name }}" id="{{ id }}" class='form-control-plaintext' onChange="{{ onselect_event }}">
     {% for option in options %}
     {% if option.selected is True %}
     <option value="{{ option.value }}" selected>{{ option.name }}</option>
