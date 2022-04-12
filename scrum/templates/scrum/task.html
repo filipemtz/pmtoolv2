@@ -1,14 +1,16 @@
-<div class="task-view row row-cols-auto">
-    <div class="task-observation col-7">
-        {{ task.name }}
+<div class="task-view row row-cols-auto sortable" id="task_{{ task.id }}">
+    <div class="task-name col-6">
+        <input class='form-control-plaintext' type="text" name="name" id="name" style="width:100%;"
+            value="{{ task.name }}" />
     </div>
-    <div class="task-priority col-1">
-        {{ task.priority }}
-    </div>
-    <div class="task-workload col-2">
+    <div class="task-workload col-2 center">
         {{ workload_selector_html }}
     </div>
-    <div class="task-status col-2">
+    <div class="task-status col-2 center">
         {{ status_selector_html }}
+    </div>
+    <div class="task-buttons col-2 center">
+        <button onclick="save_task({{ task.id }});"><i class='material-icons tiny'>save</i></button>
+        <button onclick="delete_task({{ task.id }});"><i class='material-icons tiny'>delete</i></button>
     </div>
 </div>

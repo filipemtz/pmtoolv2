@@ -1,15 +1,18 @@
-from typing import Dict, List
-from django.shortcuts import get_object_or_404, render
-from django.template import loader
-# Create your views here.
+import enum
+from django.contrib.auth.models import User
+from django.utils import timezone
+from .models import Project, Task, TaskList, TaskStatus, TaskWorkload
+from django.views import View
 from django.http import HttpResponse
-from .models import Project, Task, TaskStatusName, TaskStatusUpdateHistory, TaskWorkload
+from django.template import loader
+from django.shortcuts import get_object_or_404, render
+from typing import Dict, List
+import traceback
 
 
-def task_view(task: Task) -> str:
-    task_status = TaskStatusUpdateHistory.task_status(task.id)
-    status_selector_html = status_selector(selected_value=task_status.id)
-    workload_selector_html = workload_selector(selected_value=task.workload.id)
+def render_task(task: Task) -> str:
+    status_selector_html = status_selector(selected_value=task.status)
+    workload_selector_html = workload_selector(selected_value=task.workload)
 
     task_html = loader.get_template('scrum/task.html').render({
         "task": task,
@@ -20,44 +23,129 @@ def task_view(task: Task) -> str:
     return task_html
 
 
-def render_selector(options: List[Dict]) -> str:
+def render_selector(options: List[Dict], name: str, id) -> str:
     status_selector_html = loader.get_template('scrum/selector.html').render({
-        "name": "status",
-        "id": "status",
+        "name": name,
+        "id": id,
         "options": options,
     })
     return status_selector_html
 
 
-def status_selector(selected_value: int = -1) -> str:
-    all_status = TaskStatusName.objects.all()
-    status_options = [{'name': s.name, 'value': s.id,
-                       'selected': selected_value == s.id} for s in all_status]
-    return render_selector(status_options)
+def status_selector(selected_value: str = '') -> str:
+    all_status = TaskStatus.choices
+    status_options = [{'name': s[1], 'value': s[0],
+                       'selected': selected_value == s[0]} for s in all_status]
+    return render_selector(status_options, name='status', id='status')
 
 
 def project_selector(selected_value: int = -1):
     all_objs = Project.objects.all()
     options = [{'name': o.name, 'value': o.id,
                 'selected': selected_value == o.id} for o in all_objs]
-    return render_selector(options)
+    return render_selector(options, name='project', id='project')
 
 
-def workload_selector(selected_value: int = -1):
-    all_objs = TaskWorkload.objects.all()
-    options = [{'name': o.name, 'value': o.id,
-                'selected': selected_value == o.id} for o in all_objs]
-    return render_selector(options)
+def workload_selector(selected_value: str = ''):
+    all_objs = TaskWorkload.choices
+    options = [{'name': o[1], 'value': o[0],
+                'selected': selected_value == o[0]} for o in all_objs]
+    return render_selector(options, name='workload', id='workload')
+
+
+def update_task(request):
+    task = get_object_or_404(Task, id=request.POST['task_id'])
+    task.name = request.POST['name']
+    task.workload = request.POST['workload']
+    task.status = request.POST['status']
+    task.save()
+    return HttpResponse(render_task(task))
+
+
+def delete_task(request):
+    task = Task.objects.get(id=request.POST['task_id'])
+    task.delete()
+    return HttpResponse()
+
+
+def get_task(request, task_id: int):
+    task = get_object_or_404(Task, id=task_id)
+    return HttpResponse(render_task(task))
+
+
+def create_empty_task(request):
+    task_list = get_object_or_404(TaskList, id=request.POST['task_list_id'])
+
+    low_priority_task = Task.lowest_priority_task()
+    if low_priority_task:
+        priority = low_priority_task.priority + 1
+    else:
+        priority = 1
+
+    task = Task(
+        name='new task',
+        priority=priority,
+        workload=TaskWorkload.SMALL_1,
+        status=TaskStatus.TODO,
+        placement=task_list
+    )
+
+    task.save()
+
+    return HttpResponse(render_task(task))
+
+
+def render_task_list(task_list: TaskList) -> str:
+    subtasks = Task.objects.filter(placement=task_list)
+    subtasks_html = [render_task(t) for t in subtasks]
+    task_list_html = loader.get_template('scrum/task_list.html').render({
+        "task_list": task_list,
+        "subtasks": subtasks_html,
+    })
+    return task_list_html
+
+
+def extract_int_id(task_html_id):
+    return int(task_html_id.replace("task_", ""))
+
+
+def update_priorities(request):
+    sorted_tasks = request.POST.getlist('sorted_tasks[]')
+    ids = [extract_int_id(s) for s in sorted_tasks]
+
+    for i in range(len(ids)):
+        task = Task.objects.get(id=ids[i])
+        task.priority = i + 1
+        task.save()
+
+    return HttpResponse()
+
+
+def update_task_list(request):
+    task_list = get_object_or_404(TaskList, id=request.POST['task_list_id'])
+    task_list.name = request.POST['name']
+
+    if request.POST['toggle_archived'] == 'true':
+        task_list.archived = not task_list.archived
+
+    task_list.save()
+    return HttpResponse(render_task_list(task_list))
+
+
+def delete_task_list(request):
+    task_list = TaskList.objects.get(id=request.POST['task_list_id'])
+    task_list.delete()
+    return HttpResponse()
 
 
 def index(request):
     project_id = 1
     project = get_object_or_404(Project, pk=project_id)
-    tasks = Task.objects.filter(project=project)
-    tasks_html = [task_view(t) for t in tasks]
+    task_lists = TaskList.objects.filter(project=project)
+    tasks_lists_html = [render_task_list(t) for t in task_lists]
     project_html = project_selector(project_id)
 
     return render(request, 'scrum/index.html', {
         'project': project_html,
-        'tasks': tasks_html,
+        'task_lists_html': tasks_lists_html,
     })

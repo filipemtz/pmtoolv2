@@ -1,0 +1,32 @@
+.clickable:hover {
+    cursor: pointer;
+}
+
+.center {
+    text-align: center;
+}
+
+.main-content {
+    margin-left: 2%;
+    margin-right: 2%;
+}
+
+#error {
+    display: inline-block;
+    width: 100%;
+    background-color: "red";
+    color: aliceblue;
+}
+
+#instructions {
+    color: gray;
+    font-style: italic;
+}
+
+.task-view {
+    cursor: move;
+}
+
+.task-view.over {
+    border: 3px dotted #666;
+}
