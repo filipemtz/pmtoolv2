@@ -14,9 +14,9 @@ function save_task(task_id) {
         }
     }).done(function (data) {
         $(form_name).replaceWith(data);
-        page_alert('saved', 'positive', fadeOutTime = 0.5);
+        page_alert('saved', 'btn-success', fadeOutTime = 0.5);
     }).fail(function (data) {
-        page_alert('error', 'negative', fadeOutTime = 1);
+        page_alert('error', 'btn-danger', fadeOutTime = 1);
     });
 }
 
@@ -32,8 +32,8 @@ function delete_task(task_id) {
         }
     }).done(function (data) {
         $(form_name).remove();
-        page_alert('deleted', 'positive', fadeOutTime = 0.5);
+        page_alert('deleted', 'btn-success', fadeOutTime = 0.5);
     }).fail(function (data) {
-        page_alert('error', 'negative', fadeOutTime = 1);
+        page_alert('error', 'btn-danger', fadeOutTime = 1);
     });
 }
