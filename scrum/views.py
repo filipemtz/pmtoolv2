@@ -1,12 +1,13 @@
 import enum
 from django.contrib.auth.models import User
 from django.utils import timezone
-from .models import Project, Task, TaskList, TaskStatus, TaskWorkload
+from .models import Project, Task, TaskList, TaskListType, TaskStatus, TaskWorkload
 from django.views import View
 from django.http import HttpResponse, HttpResponseNotFound
 from django.template import loader
 from django.shortcuts import get_object_or_404, render
 from typing import Dict, List
+from datetime import datetime
 import traceback
 
 
@@ -137,13 +138,17 @@ def update_priorities(request):
 def update_task_list(request):
     task_list = get_object_or_404(TaskList, id=request.POST['task_list_id'])
     task_list.name = request.POST['name']
+    task_list.start_date = datetime.strptime(
+        request.POST['start_date'], '%Y-%m-%d')
+    task_list.end_date = datetime.strptime(
+        request.POST['end_date'], '%Y-%m-%d')
 
     if request.POST['toggle_archived'] == 'true':
         task_list.archived = not task_list.archived
 
     task_list.save()
 
-    if (task_list.id == 1):
+    if (task_list.task_list_type == TaskListType.BACKLOG):
         template = 'scrum/backlog.html'
     else:
         template = 'scrum/sprint.html'
@@ -165,6 +170,8 @@ def empty_task_list(request):
         created_at=timezone.now(),
         project=project,
         archived=False,
+        start_date=timezone.now(),
+        end_date=timezone.now(),
     )
 
     task_list.save()
@@ -181,10 +188,10 @@ def index(request):
 
     for i in range(len(task_lists)):
         t = task_lists[i]
-        if i < len(task_lists) - 1:
-            tasks_lists_html.append(render_task_list(t, 'scrum/sprint.html'))
-        else:
+        if t.task_list_type == TaskListType.BACKLOG:
             tasks_lists_html.append(render_task_list(t, 'scrum/backlog.html'))
+        else:
+            tasks_lists_html.append(render_task_list(t, 'scrum/sprint.html'))
 
     project_html = project_selector(project_id)
 

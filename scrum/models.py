@@ -35,13 +35,22 @@ class TaskStatus(models.TextChoices):
     DONE = 'DO', _('done')
 
 
+class TaskListType(models.TextChoices):
+    BACKLOG = 'BL', _('backlog')
+    SPRINT = 'SP', _('sprint')
+
+
 class TaskList(models.Model):
     name = models.CharField(max_length=100)
     created_at = models.DateTimeField()
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
     archived = models.BooleanField()
-    start_date = models.DateTimeField(null=True)
-    end_date = models.DateTimeField(null=True)
+    start_date = models.DateField(null=True)
+    end_date = models.DateField(null=True)
+    task_list_type = models.TextField(
+        max_length=2,
+        choices=TaskListType.choices,
+        default=TaskListType.SPRINT)
 
     class Meta:
         ordering = ['-created_at']

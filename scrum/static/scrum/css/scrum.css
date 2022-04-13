@@ -21,8 +21,17 @@ body {
     font-size: 10pt;
 }
 
+.my-icon-class {
+    padding-left: 0%;
+    padding-right: 0%;
+}
+
 .task-list-editor {
     border: 1px solid #000;
+}
+
+.task-list-date {
+    width: 7em;
 }
 
 .task-list-buttons,
@@ -73,3 +82,10 @@ body {
     padding-top: 5px;
     padding-bottom: 5px;
 }
+
+/*
+.form-control-plaintext {
+    padding-top: 0%;
+    padding-bottom: 0%;
+}
+*/

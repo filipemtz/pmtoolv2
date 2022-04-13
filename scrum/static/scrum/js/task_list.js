@@ -35,6 +35,7 @@ function append_new_empty_task(task_list_id) {
 
 function update_task_list(task_list_id, toggle_archived) {
     form_name = "#task_list_" + task_list_id;
+    console.log('form name:' + form_name)
 
     $.ajax({
         method: "POST",
@@ -43,11 +44,14 @@ function update_task_list(task_list_id, toggle_archived) {
         data: {
             'task_list_id': task_list_id,
             'name': $(form_name).find('#name').val(),
+            'start_date': $(form_name).find('#date_start_' + task_list_id).val(),
+            'end_date': $(form_name).find('#date_end_' + task_list_id).val(),
             'toggle_archived': toggle_archived,
         }
     }).done(function (data) {
         $(form_name).replaceWith(data);
         make_task_lists_sortable();
+        make_div_dates_pickable(form_name);
         page_alert('saved', SUCCESS_CLASS, fadeOutTime = 0.5);
     }).fail(function (data) {
         page_alert('fail', FAIL_CLASS, fadeOutTime = 1);
@@ -75,6 +79,9 @@ function delete_task_list(task_list_id) {
 
 
 function update_task_priorities(items) {
+    if (items.length < 1)
+        return;
+
     task_list = $("#" + items[0]).parent().parent().attr("id");
 
     $.ajax({
@@ -100,5 +107,20 @@ function make_task_lists_sortable() {
             }
         })
         $(this).disableSelection();
+    });
+}
+
+function make_dates_pickable() {
+    $(".task-list-date").each(function (index) {
+        $(this).datepicker({
+            dateFormat: "yy-mm-dd"
+        })
+    });
+}
+function make_div_dates_pickable(div_id) {
+    $(div_id).find(".task-list-date").each(function (index) {
+        $(this).datepicker({
+            dateFormat: "yy-mm-dd"
+        })
     });
 }

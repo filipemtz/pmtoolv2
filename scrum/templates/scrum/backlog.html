@@ -1,19 +1,42 @@
 <div class="task-list-container" id="task_list_{{ task_list.id }}">
 
     <div class="task-list-editor row row-cols-auto">
-        <div class="col-11">
+        <div class="col-7">
             <input class='form-control-plaintext task-list-name' type="text" name="name" id="name"
                 value="{{ task_list.name }}"
                 onkeypress="if (event.which == 13) update_task_list({{ task_list.id }}, false);" />
         </div>
-        <div class="task-list-buttons col-1 center">
-            <button class="btn" onclick="update_task_list({{ task_list.id }}, true);" title="archive task list">
-                {% if task_list.archived %}
-                <i class='material-icons tiny'>visibility</i>
-                {% else %}
-                <i class='material-icons tiny'>visibility_off</i>
-                {% endif%}
-            </button>
+        <div class="col-2 center">
+            <div style="display:inline-block">start:</div>
+            <div style="display:inline-block">
+                <!-- each picklable date must have an unique id -->
+                <input class='form-control-plaintext task-list-date center' type="datetime"
+                    name="date_start_{{ task_list.id }}" id="date_start_{{ task_list.id }}"
+                    value="{{ task_list.start_date|date:'Y-m-d' }}" readonly
+                    onchange="update_task_list({{ task_list.id }}, false);" />
+            </div>
+        </div>
+        <div class="col-2 center">
+            <div style="display:inline-block">end:</div>
+            <div style="display:inline-block">
+                <!-- each picklable date must have an unique id -->
+                <input class='form-control-plaintext task-list-date center' type="datetime"
+                    name="date_end_{{ task_list.id }}" id="date_end_{{ task_list.id }}"
+                    value="{{ task_list.end_date|date:'Y-m-d' }}" readonly
+                    onchange="update_task_list({{ task_list.id }}, false);" />
+            </div>
+        </div>
+        <div class="task-list-buttons col-1">
+            <div style="display:inline-block; vertical-align: middle;">
+                <button class="btn my-icon-class" onclick="update_task_list({{ task_list.id }}, true);"
+                    title="archive task list">
+                    {% if task_list.archived %}
+                    <i class="bi bi-eye-slash"></i>
+                    {% else %}
+                    <i class="bi bi-eye"></i>
+                    {% endif%}
+                </button>
+            </div>
         </div>
     </div>
 
@@ -38,6 +61,6 @@
 
     {% endif %}
 
-    <hr>
+    <br>
 
 </div>

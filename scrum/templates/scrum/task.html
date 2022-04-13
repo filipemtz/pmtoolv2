@@ -10,6 +10,8 @@
         {{ status_selector_html }}
     </div>
     <div class="task-buttons col-1 center">
-        <button class="btn" onclick="delete_task({{ task.id }});"><i class='material-icons tiny'>delete</i></button>
+        <button class="btn my-icon-class" onclick="delete_task({{ task.id }});">
+            <i class="bi bi-trash"></i>
+        </button>
     </div>
 </div>
