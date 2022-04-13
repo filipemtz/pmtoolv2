@@ -33,6 +33,7 @@ function append_new_empty_task(task_list_id) {
     });
 }
 
+
 function update_task_list(task_list_id, toggle_archived) {
     form_name = "#task_list_" + task_list_id;
     console.log('form name:' + form_name)
@@ -57,6 +58,7 @@ function update_task_list(task_list_id, toggle_archived) {
         page_alert('fail', FAIL_CLASS, fadeOutTime = 1);
     });
 }
+
 
 function delete_task_list(task_list_id) {
     if (confirm("Tem certeza que deseja remover a lista de tarefas e todas as suas subtarefas?")) {
@@ -98,6 +100,22 @@ function update_task_priorities(items) {
 }
 
 
+function show_burndown_graph(task_list_id) {
+    $.ajax({
+        method: "POST",
+        url: "burndown",
+        mode: 'same-origin', // Do not send CSRF token to another domain.
+        data: {
+            'task_list_id': task_list_id,
+        }
+    }).done(function (data) {
+        $("#burndown-chart-modal-image").html(data);
+    }).fail(function (data) {
+        page_alert('fail', FAIL_CLASS, fadeOutTime = 1);
+    });
+}
+
+
 function make_task_lists_sortable() {
     $(".tasks").each(function (index) {
         $(this).sortable({
@@ -110,6 +128,7 @@ function make_task_lists_sortable() {
     });
 }
 
+
 function make_dates_pickable() {
     $(".task-list-date").each(function (index) {
         $(this).datepicker({
@@ -117,6 +136,8 @@ function make_dates_pickable() {
         })
     });
 }
+
+
 function make_div_dates_pickable(div_id) {
     $(div_id).find(".task-list-date").each(function (index) {
         $(this).datepicker({
@@ -124,3 +145,4 @@ function make_div_dates_pickable(div_id) {
         })
     });
 }
+

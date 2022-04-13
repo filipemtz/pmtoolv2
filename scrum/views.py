@@ -9,6 +9,18 @@ from django.shortcuts import get_object_or_404, render
 from typing import Dict, List
 from datetime import datetime
 import traceback
+import matplotlib
+import matplotlib.pyplot as plt
+from matplotlib.ticker import MaxNLocator
+import seaborn as sns
+import urllib
+import io
+import base64
+
+matplotlib.use('Agg')
+sns.set_style('whitegrid')
+matplotlib.rcParams['font.sans-serif'] = ['Tahoma', 'DejaVu Sans',
+                                          'Lucida Grande', 'Verdana']
 
 
 def render_task(task: Task) -> str:
@@ -63,8 +75,13 @@ def update_task(request):
     task = get_object_or_404(Task, id=request.POST['task_id'])
     task.name = request.POST['name']
     task.workload = request.POST['workload']
-    task.status = request.POST['status']
+
+    if task.status != request.POST['status']:
+        task.status = request.POST['status']
+        task.status_update = timezone.now()
+
     task.save()
+
     return HttpResponse(render_task(task))
 
 
@@ -93,7 +110,8 @@ def create_empty_task(request):
         priority=priority,
         workload=TaskWorkload.SMALL_1,
         status=TaskStatus.TODO,
-        placement=task_list
+        placement=task_list,
+        status_update=timezone.now(),
     )
 
     task.save()
@@ -177,6 +195,51 @@ def empty_task_list(request):
     task_list.save()
 
     return HttpResponse(render_task_list(task_list, 'scrum/sprint.html'))
+
+
+def create_burndown_chart(request):
+    task_list = get_object_or_404(TaskList, id=request.POST['task_list_id'])
+    tasks = Task.objects.filter(placement=task_list)
+
+    total_points = sum([TaskWorkload.as_int(t.workload) for t in tasks])
+    tasks_done = tasks.filter(status=TaskStatus.DONE).order_by('status_update')
+    points_done = sum([TaskWorkload.as_int(t.workload) for t in tasks_done])
+
+    real_chart_x, real_chart_y = [], []
+    real_chart_x.append(task_list.start_date)
+    real_chart_y.append(total_points)
+    decremental_points = total_points
+
+    for t in tasks_done:
+        decremental_points -= TaskWorkload.as_int(t.workload)
+        real_chart_x.append(t.status_update)
+        real_chart_y.append(decremental_points)
+
+    real_chart_x.append(task_list.end_date)
+    real_chart_y.append(total_points - points_done)
+
+    ideal_chart_x, ideal_chart_y = [], []
+    ideal_chart_x.append(task_list.start_date)
+    ideal_chart_x.append(task_list.end_date)
+    ideal_chart_y.append(total_points)
+    ideal_chart_y.append(0)
+
+    fig, ax = plt.subplots(figsize=(10, 5))
+    ax.plot(real_chart_x, real_chart_y)
+    ax.plot(ideal_chart_x, ideal_chart_y)
+    ax.set_ylabel('Task Points')
+    ax.set_xlabel('Date')
+    ax.yaxis.set_major_locator(MaxNLocator(integer=True))
+    ax.legend(['real', 'expected'])
+    plt.tight_layout()
+
+    # extracted from https://medium.com/@mdhv.kothari99/matplotlib-into-django-template-5def2e159997
+    buf = io.BytesIO()
+    fig.savefig(buf, format='png', dpi=300)
+    buf_as_string = base64.b64encode(buf.getvalue()).decode()
+    uri = urllib.parse.quote(buf_as_string)
+
+    return render(request, 'scrum/burndown.html', {'data': uri})
 
 
 def index(request):

@@ -62,6 +62,21 @@
     </nav>
 
     <br>
+    <div id='burndown-chart-modal' class="modal fade" tabindex="-1">
+        <div class="modal-dialog" id="burndown-modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Burndown Chart</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div id='burndown-chart-modal-image' class="modal-body center">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <div class="main-content" id="task_lists">
         {% for task_list_html in task_lists_html %}

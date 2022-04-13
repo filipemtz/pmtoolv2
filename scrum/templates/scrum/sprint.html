@@ -1,13 +1,14 @@
 <div class="task-list-container" id="task_list_{{ task_list.id }}">
 
+    <div id='burndown'></div>
+
     <div class="task-list-editor row row-cols-auto">
-        <div class="col-7">
+        <div class="col-8">
             <input class='form-control-plaintext task-list-name' type="text" name="name" id="name"
                 value="{{ task_list.name }}"
                 onkeypress="if (event.which == 13) update_task_list({{ task_list.id }}, false);" />
         </div>
         <div class="col-2 center">
-            <div style="display:inline-block">start:</div>
             <div style="display:inline-block">
                 <!-- each picklable date must have an unique id -->
                 <input class='form-control-plaintext task-list-date center' type="datetime"
@@ -15,9 +16,7 @@
                     value="{{ task_list.start_date|date:'Y-m-d' }}" readonly
                     onchange="update_task_list({{ task_list.id }}, false);" />
             </div>
-        </div>
-        <div class="col-2 center">
-            <div style="display:inline-block">end:</div>
+            <div style="display:inline-block">:</div>
             <div style="display:inline-block">
                 <!-- each picklable date must have an unique id -->
                 <input class='form-control-plaintext task-list-date center' type="datetime"
@@ -26,7 +25,11 @@
                     onchange="update_task_list({{ task_list.id }}, false);" />
             </div>
         </div>
-        <div class="task-list-buttons col-1">
+        <div class="task-list-buttons col-2">
+            <button class="btn my-icon-class" onclick="show_burndown_graph({{ task_list.id }});" data-bs-toggle="modal"
+                data-bs-target="#burndown-chart-modal" title="burndown graph">
+                <i class="bi bi-graph-down"></i>
+            </button>
             <button class="btn my-icon-class" onclick="update_task_list({{ task_list.id }}, true);"
                 title="archive task list">
                 {% if task_list.archived %}
@@ -49,10 +52,6 @@
         {{ task_html }}
         {% endfor %}
         {% endif %}
-    </div>
-
-    <div id='new_task_button' class="clickable" onclick="append_new_empty_task({{ task_list.id }});">
-        <i class='material-icons tiny'>add</i>
     </div>
 
     {% endif %}

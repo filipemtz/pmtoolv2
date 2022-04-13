@@ -27,6 +27,10 @@ class TaskWorkload(models.TextChoices):
     LARGE_89 = 'L89', _('large (89)')
     EPIC_144 = 'E144', _('epic (144)')
 
+    @classmethod
+    def as_int(cls, val) -> int:
+        return int(val[1:])
+
 
 class TaskStatus(models.TextChoices):
     TODO = 'TD', _('to do')
@@ -65,6 +69,7 @@ class Task(models.Model):
     workload = models.TextField(max_length=4, choices=TaskWorkload.choices)
     status = models.TextField(max_length=2, choices=TaskStatus.choices)
     placement = models.ForeignKey(TaskList, on_delete=models.CASCADE)
+    status_update = models.DateTimeField()
 
     @classmethod
     def highest_priority_task(cls):

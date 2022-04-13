@@ -48,6 +48,10 @@ body {
     font-style: italic;
 }
 
+#burndown-modal-dialog {
+    max-width: 950px;
+}
+
 .task-view {
     cursor: move;
 }
