@@ -3,12 +3,12 @@
     <div id='burndown'></div>
 
     <div class="task-list-editor row row-cols-auto">
-        <div class="col-8">
+        <div class="col-7">
             <input class='form-control-plaintext task-list-name' type="text" name="name" id="name"
                 value="{{ task_list.name }}"
                 onkeypress="if (event.which == 13) update_task_list({{ task_list.id }}, false);" />
         </div>
-        <div class="col-2 center">
+        <div class="col-3 center">
             <div style="display:inline-block">
                 <!-- each picklable date must have an unique id -->
                 <input class='form-control-plaintext task-list-date center' type="datetime"

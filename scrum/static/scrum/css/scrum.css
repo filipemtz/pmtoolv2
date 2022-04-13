@@ -26,6 +26,10 @@ body {
     padding-right: 0%;
 }
 
+input {
+    text-overflow: ellipsis;
+}
+
 .task-list-editor {
     border: 1px solid #000;
 }
@@ -86,10 +90,3 @@ body {
     padding-top: 5px;
     padding-bottom: 5px;
 }
-
-/*
-.form-control-plaintext {
-    padding-top: 0%;
-    padding-bottom: 0%;
-}
-*/
