@@ -1,0 +1,48 @@
+<div class="task-list-details-view" id="task_list_details_{{ task_list.id }}">
+
+    <div class="row">
+        <div class="col">
+            <input class='form-control-plaintext h5' type="text" name="name" id="name" value="{{ task_list.name }}"
+                onkeypress="if (event.which == 13) update_task_list({{ task_list.id }}, false);" />
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col">
+            Start:
+        </div>
+        <div class="col">
+            <!-- each picklable date must have an unique id -->
+            <input class='form-control-plaintext task-list-date center' type="datetime"
+                name="date_start_{{ task_list.id }}" id="date_start_{{ task_list.id }}"
+                value="{{ task_list.start_date|date:'Y-m-d' }}" readonly
+                onchange="update_task_list({{ task_list.id }}, false);" />
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col">
+            End:
+        </div>
+        <div class="col">
+            <!-- each picklable date must have an unique id -->
+            <input class='form-control-plaintext task-list-date center' type="datetime"
+                name="date_end_{{ task_list.id }}" id="date_end_{{ task_list.id }}"
+                value="{{ task_list.end_date|date:'Y-m-d' }}" readonly
+                onchange="update_task_list({{ task_list.id }}, false);" />
+        </div>
+    </div>
+
+    <div>
+        <label for="observation" class="form-label">Observations (issues, opportunities, retrospective, etc.)</label>
+        <textarea id="observation" name="observation" class="form-control small-font"
+            rows="7">{{ task_list.observation }}</textarea>
+    </div>
+    <div class="row" style="padding-top:10px">
+        <div class="col"><button class="btn btn-success"
+                onclick="update_task_list({{ task_list.id }}, false);">save</button></div>
+    </div>
+
+</div>
+
+</div>
