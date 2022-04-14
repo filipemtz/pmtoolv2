@@ -6,23 +6,23 @@
         </div>
     </div>
     <div class="row">
-        <div class="task-workload col">
+        <div class="col">
             Workload:
         </div>
-        <div class="task-workload col">
+        <div class="col">
             {{ workload_selector_html }}
         </div>
     </div>
     <div class="row">
-        <div class="task-status col">
+        <div class="col">
             Status:
         </div>
-        <div class="task-status col">
+        <div class="col">
             {{ status_selector_html }}
         </div>
     </div>
     <div>
-        <label for="observation" class="form-label">Observations</label>
+        <label for="observation" class="form-label">Observations (acceptance criteria, etc.)</label>
         <textarea id="observation" name="observation" class="form-control small-font"
             rows="7">{{ task.observation }}</textarea>
     </div>

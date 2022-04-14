@@ -40,9 +40,33 @@ function append_new_empty_task(task_list_id, bottom_or_top) {
 }
 
 
-function update_task_list(task_list_id, toggle_archived) {
+function update_task_list_from_modal(modal_name, task_list_id) {
+    $.ajax({
+        method: "POST",
+        url: "update_task_list",
+        mode: 'same-origin', // Do not send CSRF token to another domain.
+        data: {
+            'task_list_id': task_list_id,
+            'name': $(modal_name).find('#name').val(),
+            'start_date': $(modal_name).find('#date_start_' + task_list_id).val(),
+            'end_date': $(modal_name).find('#date_end_' + task_list_id).val(),
+            'observation': $(modal_name).find("#observation").val(),
+            'toggle_archived': 'false',
+        }
+    }).done(function (data) {
+        form_name = "#task_list_" + task_list_id;
+        $(form_name).replaceWith(data);
+        make_task_lists_sortable();
+        make_div_dates_pickable(form_name);
+        page_alert('saved', SUCCESS_CLASS, fadeOutTime = 0.5);
+    }).fail(function (data) {
+        page_alert('fail', FAIL_CLASS, fadeOutTime = 1);
+    });
+}
+
+
+function update_task_list_from_row(task_list_id, toggle_archived) {
     form_name = "#task_list_" + task_list_id;
-    console.log('form name:' + form_name)
 
     $.ajax({
         method: "POST",
@@ -63,6 +87,20 @@ function update_task_list(task_list_id, toggle_archived) {
     }).fail(function (data) {
         page_alert('fail', FAIL_CLASS, fadeOutTime = 1);
     });
+}
+
+
+function update_task_list(task_list_id, toggle_archived) {
+    modal_name = "#task_list_details_" + task_list_id;
+
+    // if the modal is visible, get the task information from it. 
+    if ($(modal_name).is(":visible")) {
+        update_task_list_from_modal(modal_name, task_list_id);
+    }
+    else {
+        update_task_list_from_row(task_list_id, toggle_archived);
+    }
+
 }
 
 
@@ -121,6 +159,22 @@ function show_burndown_graph(task_list_id) {
     });
 }
 
+
+function show_task_list_details_form(task_list_id) {
+    $.ajax({
+        method: "POST",
+        url: "task_list_details_form",
+        mode: 'same-origin', // Do not send CSRF token to another domain.
+        data: {
+            'task_list_id': task_list_id,
+        }
+    }).done(function (data) {
+        $("#details-form-placeholder").html(data);
+    }).fail(function (data) {
+        page_alert('fail', FAIL_CLASS, fadeOutTime = 1);
+    });
+
+}
 
 function make_task_lists_sortable() {
     $(".tasks").each(function (index) {

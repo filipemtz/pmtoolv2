@@ -14,5 +14,7 @@ urlpatterns = [
     path('update_task_list', views.update_task_list, name='update_task_list'),
     path('delete_task_list', views.delete_task_list, name='delete_task_list'),
     path('empty_task_list', views.empty_task_list, name='empty_task_list'),
+    path('task_list_details_form', views.task_list_details_form,
+         name='task_list_details_form'),
     path('burndown', views.create_burndown_chart, name='create_burndown_chart'),
 ]

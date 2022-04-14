@@ -57,6 +57,7 @@ class TaskList(models.Model):
         max_length=2,
         choices=TaskListType.choices,
         default=TaskListType.SPRINT)
+    observation = models.TextField(blank=True, default='')
 
     class Meta:
         ordering = ['-created_at']

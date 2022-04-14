@@ -10,10 +10,17 @@
         {{ status_selector_html }}
     </div>
     <div class="task-buttons col-2 center">
+        {% if task.observation %}
+        <button class="btn my-icon-class" onclick="show_details_form({{ task.id }});" data-bs-toggle="modal"
+            data-bs-target="#details-editor-modal" title="edit" style="color: blue">
+            <i class="bi bi-box-arrow-up-right"></i>
+        </button>
+        {% else %}
         <button class="btn my-icon-class" onclick="show_details_form({{ task.id }});" data-bs-toggle="modal"
             data-bs-target="#details-editor-modal" title="edit">
             <i class="bi bi-box-arrow-up-right"></i>
         </button>
+        {% endif %}
         <button class="btn my-icon-class" onclick="delete_task({{ task.id }});">
             <i class="bi bi-trash"></i>
         </button>

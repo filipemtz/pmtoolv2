@@ -113,6 +113,13 @@ def task_details_form(request):
     })
 
 
+def task_list_details_form(request):
+    task_list = get_object_or_404(TaskList, id=request.POST['task_list_id'])
+    return render(request, 'scrum/sprint_details.html', {
+        'task_list': task_list,
+    })
+
+
 def create_empty_task(request):
     task_list = get_object_or_404(TaskList, id=request.POST['task_list_id'])
     bottom_or_top_priority = request.POST['bottom_or_top']
@@ -185,6 +192,9 @@ def update_task_list(request):
 
     if request.POST['toggle_archived'] == 'true':
         task_list.archived = not task_list.archived
+
+    if 'observation' in request.POST:
+        task_list.observation = request.POST['observation']
 
     task_list.save()
 
