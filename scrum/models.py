@@ -26,6 +26,8 @@ class TaskWorkload(models.TextChoices):
     LARGE_55 = 'L55', _('large (55)')
     LARGE_89 = 'L89', _('large (89)')
     EPIC_144 = 'E144', _('epic (144)')
+    EPIC_233 = 'E233', _('epic (233)')
+    EPIC_377 = 'E377', _('epic (377)')
 
     @classmethod
     def as_int(cls, val) -> int:
@@ -70,6 +72,7 @@ class Task(models.Model):
     status = models.TextField(max_length=2, choices=TaskStatus.choices)
     placement = models.ForeignKey(TaskList, on_delete=models.CASCADE)
     status_update = models.DateTimeField()
+    observation = models.TextField(blank=True, default='')
 
     @classmethod
     def highest_priority_task(cls):
@@ -78,10 +81,10 @@ class Task(models.Model):
     @classmethod
     def lowest_priority_task(cls):
         # The negative sign in front of "-pub_date" indicates descending order. Ascending order is implied.
-        tasks = Task.objects.order_by('-priority').first()
+        return Task.objects.order_by('-priority').first()
 
     class Meta:
         ordering = ['priority']
 
     def __str__(self):
-        return f"(name='{self.name}', Priority='{self.priority}', Workload='{self.workload}')"
+        return f"name='{self.name}' (Priority='{self.priority}', Workload='{self.workload}', list='{self.placement.name}')"

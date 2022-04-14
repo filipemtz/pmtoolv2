@@ -1,8 +1,6 @@
 <div class="task-list-container" id="task_list_{{ task_list.id }}">
-
-    <div id='burndown'></div>
-
-    <div class="task-list-editor row row-cols-auto">
+    <div class="task-list-editor row row-cols-auto"
+        ondblclick="page_alert('not implemented yet', INFO_CLASS, fadeOutTime=5);">
         <div class="col-7">
             <input class='form-control-plaintext task-list-name' type="text" name="name" id="name"
                 value="{{ task_list.name }}"
@@ -29,6 +27,10 @@
             <button class="btn my-icon-class" onclick="show_burndown_graph({{ task_list.id }});" data-bs-toggle="modal"
                 data-bs-target="#burndown-chart-modal" title="burndown graph">
                 <i class="bi bi-graph-down"></i>
+            </button>
+            <button class="btn my-icon-class" onclick="page_alert('not implemented yet', INFO_CLASS, fadeOutTime=2);"
+                title="edit details">
+                <i class="bi bi-box-arrow-up-right"></i>
             </button>
             <button class="btn my-icon-class" onclick="update_task_list({{ task_list.id }}, true);"
                 title="archive task list">

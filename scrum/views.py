@@ -80,6 +80,9 @@ def update_task(request):
         task.status = request.POST['status']
         task.status_update = timezone.now()
 
+    if 'observation' in request.POST:
+        task.observation = request.POST['observation']
+
     task.save()
 
     return HttpResponse(render_task(task))
@@ -96,14 +99,33 @@ def get_task(request, task_id: int):
     return HttpResponse(render_task(task))
 
 
+def task_details_form(request):
+    task = get_object_or_404(Task, id=request.POST['task_id'])
+    onselect_event = f"save_task({task.id});"
+    status_selector_html = status_selector(
+        selected_value=task.status, onselect_event=onselect_event)
+    workload_selector_html = workload_selector(
+        selected_value=task.workload, onselect_event=onselect_event)
+    return render(request, 'scrum/task-details.html', {
+        'task': task,
+        "workload_selector_html": workload_selector_html,
+        "status_selector_html": status_selector_html,
+    })
+
+
 def create_empty_task(request):
     task_list = get_object_or_404(TaskList, id=request.POST['task_list_id'])
+    bottom_or_top_priority = request.POST['bottom_or_top']
 
-    low_priority_task = Task.lowest_priority_task()
-    if low_priority_task:
-        priority = low_priority_task.priority + 1
+    priority = 1
+    if bottom_or_top_priority == 'bottom':
+        low_priority_task = Task.lowest_priority_task()
+        if low_priority_task:
+            priority = low_priority_task.priority + 1
     else:
-        priority = 1
+        for t in Task.objects.filter(placement=task_list):
+            t.priority += 1
+            t.save()
 
     task = Task(
         name='new task',
@@ -218,19 +240,19 @@ def create_burndown_chart(request):
     real_chart_x.append(task_list.end_date)
     real_chart_y.append(total_points - points_done)
 
-    ideal_chart_x, ideal_chart_y = [], []
-    ideal_chart_x.append(task_list.start_date)
-    ideal_chart_x.append(task_list.end_date)
-    ideal_chart_y.append(total_points)
-    ideal_chart_y.append(0)
+    desired_chart_x, desired_chart_y = [], []
+    desired_chart_x.append(task_list.start_date)
+    desired_chart_x.append(task_list.end_date)
+    desired_chart_y.append(total_points)
+    desired_chart_y.append(0)
 
     fig, ax = plt.subplots(figsize=(10, 5))
-    ax.plot(real_chart_x, real_chart_y)
-    ax.plot(ideal_chart_x, ideal_chart_y)
+    ax.plot(real_chart_x, real_chart_y, marker='o')
+    ax.plot(desired_chart_x, desired_chart_y, '--', marker='o')
     ax.set_ylabel('Task Points')
     ax.set_xlabel('Date')
     ax.yaxis.set_major_locator(MaxNLocator(integer=True))
-    ax.legend(['real', 'expected'])
+    ax.legend(['real', 'desired'])
     plt.tight_layout()
 
     # extracted from https://medium.com/@mdhv.kothari99/matplotlib-into-django-template-5def2e159997

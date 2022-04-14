@@ -17,7 +17,9 @@
 
 select,
 input,
-body {
+body,
+textarea,
+.small-font {
     font-size: 10pt;
 }
 

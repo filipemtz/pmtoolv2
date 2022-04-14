@@ -1,5 +1,5 @@
 <div class="task-view row row-cols-auto sortable draggable" id="task_{{ task.id }}">
-    <div class="task-name col-9">
+    <div class="task-name col-8">
         <input class='form-control-plaintext' type="text" name="name" id="name" style="width:100%;"
             value="{{ task.name }}" onkeypress="if (event.which == 13) save_task({{ task.id }});" />
     </div>
@@ -9,7 +9,11 @@
     <div class="task-status col-1 center">
         {{ status_selector_html }}
     </div>
-    <div class="task-buttons col-1 center">
+    <div class="task-buttons col-2 center">
+        <button class="btn my-icon-class" onclick="show_details_form({{ task.id }});" data-bs-toggle="modal"
+            data-bs-target="#details-editor-modal" title="edit">
+            <i class="bi bi-box-arrow-up-right"></i>
+        </button>
         <button class="btn my-icon-class" onclick="delete_task({{ task.id }});">
             <i class="bi bi-trash"></i>
         </button>
