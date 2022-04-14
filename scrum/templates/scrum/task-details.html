@@ -1,0 +1,33 @@
+<div class="task-details-view" id="task_details_{{ task.id }}">
+    <div class="row">
+        <div class="task-name col">
+            <input class='form-control-plaintext h5' type="text" name="name" id="name" style="width:100%;"
+                value="{{ task.name }}" onkeypress="if (event.which == 13) save_task({{ task.id }});" />
+        </div>
+    </div>
+    <div class="row">
+        <div class="task-workload col">
+            Workload:
+        </div>
+        <div class="task-workload col">
+            {{ workload_selector_html }}
+        </div>
+    </div>
+    <div class="row">
+        <div class="task-status col">
+            Status:
+        </div>
+        <div class="task-status col">
+            {{ status_selector_html }}
+        </div>
+    </div>
+    <div>
+        <label for="observation" class="form-label">Observations</label>
+        <textarea id="observation" name="observation" class="form-control small-font"
+            rows="7">{{ task.observation }}</textarea>
+    </div>
+    <div class="row" style="padding-top:10px">
+        <div class="col"><button class="btn btn-success" onclick="save_task({{task.id }});">save</button></div>
+    </div>
+
+</div>
