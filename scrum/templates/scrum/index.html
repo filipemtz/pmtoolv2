@@ -51,11 +51,19 @@
                         </li>
                     </ul>
                 </div>
-                <div class="p-2 project_selector">{{ project_selector }}</div>
                 <div class="p-2">
                     <button type="button" class="btn btn-sm btn-primary"
                         onclick='append_new_empty_task_list({{ project.id }})'>new
                         sprint</button>
+                </div>
+                <div class="p-2 project_selector">{{ project_selector }}</div>
+                <div class="p-2">
+                    <div class="header-text text-end">
+                        {{ user.username }}
+                    </div>
+                    <div class="header-text text-end">
+                        <a href="{% url 'logout' %}?next={{ request.path }}">Logout</a>
+                    </div>
                 </div>
             </div>
         </div>

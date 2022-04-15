@@ -1,14 +1,12 @@
-import enum
 from django.contrib.auth.models import User
+from django.contrib.auth import login, authenticate
 from django.utils import timezone
 from .models import Project, Task, TaskList, TaskListType, TaskStatus, TaskWorkload
-from django.views import View
 from django.http import HttpResponse, HttpResponseNotFound
 from django.template import loader
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, redirect, render
 from typing import Dict, List
 from datetime import datetime
-import traceback
 import matplotlib
 import matplotlib.pyplot as plt
 from matplotlib.ticker import MaxNLocator
@@ -16,11 +14,15 @@ import seaborn as sns
 import urllib
 import io
 import base64
+from django.contrib.auth.decorators import login_required
 
 matplotlib.use('Agg')
 sns.set_style('whitegrid')
-matplotlib.rcParams['font.sans-serif'] = ['Tahoma', 'DejaVu Sans',
-                                          'Lucida Grande', 'Verdana']
+font = {
+    'family': ['Tahoma', 'DejaVu Sans', 'Lucida Grande', 'Verdana'],
+    'size': 14,
+}
+matplotlib.rc('font', **font)
 
 
 def render_task(task: Task) -> str:
@@ -274,6 +276,7 @@ def create_burndown_chart(request):
     return render(request, 'scrum/burndown.html', {'data': uri})
 
 
+@login_required
 def index(request):
     project_id = 1
     project = get_object_or_404(Project, pk=project_id)
@@ -294,4 +297,66 @@ def index(request):
         'project': project,
         'project_selector': project_html,
         'task_lists_html': tasks_lists_html,
+    })
+
+
+def test_view(request):
+    return render(request, 'registration/test.html')
+
+
+def signup_is_valid(request):
+    error_msgs = []
+
+    if ('firstname' not in request.POST) or (len(request.POST['firstname']) == 0):
+        error_msgs.append("first name is required.")
+    if ('lastname' not in request.POST) or (len(request.POST['lastname']) == 0):
+        error_msgs.append("last name is required.")
+    if ('username' not in request.POST) or (len(request.POST['username']) == 0):
+        error_msgs.append("user name is required.")
+    if ('email' not in request.POST) or (len(request.POST['email']) == 0):
+        error_msgs.append("email is required.")
+    if ('password' not in request.POST) or (len(request.POST['password']) == 0):
+        error_msgs.append("password is required.")
+    if ('password-check' not in request.POST) or (len(request.POST['password-check']) == 0):
+        error_msgs.append("repeat password is required.")
+
+    if User.objects.filter(username=request.POST['username']).count() > 0:
+        error_msgs.append("username already taken.")
+
+    if User.objects.filter(email=request.POST['email']).count() > 0:
+        error_msgs.append("email already registred.")
+
+    if request.POST['password'] != request.POST['password-check']:
+        error_msgs.append("passwords do not match.")
+
+    is_valid = len(error_msgs) == 0
+
+    return is_valid, error_msgs
+
+
+def signup_user(request):
+    new_user = User.objects.create_user(
+        request.POST['firstname'],
+        request.POST['email'],
+        request.POST['password'])
+    new_user.lastname = request.POST['lastname']
+    new_user.save()
+
+
+def signup_form(request):
+    error_msgs = ''
+    if request.method == "POST":
+        is_valid, error_msgs = signup_is_valid(request)
+        if is_valid:
+            signup_user(request)
+            user = authenticate(
+                request,
+                username=request.POST['username'],
+                password=request.POST['password']
+            )
+            login(request, user)
+            return redirect('/scrum')
+
+    return render(request, 'registration/signup.html', {
+        'error_msgs': error_msgs
     })

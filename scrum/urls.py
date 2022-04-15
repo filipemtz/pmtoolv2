@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import include, path
 
 from . import views
 
@@ -17,4 +17,7 @@ urlpatterns = [
     path('task_list_details_form', views.task_list_details_form,
          name='task_list_details_form'),
     path('burndown', views.create_burndown_chart, name='create_burndown_chart'),
+    path('accounts/', include('django.contrib.auth.urls')),
+    path('signup', views.signup_form, name="signup"),
+    path('test', views.test_view, name="test_view"),
 ]

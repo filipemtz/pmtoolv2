@@ -1,5 +1,5 @@
 <div class="task-list-container" id="task_list_{{ task_list.id }}">
-    <div class="task-list-editor row row-cols-auto" style="background-color: skyblue">
+    <div class="task-list-editor row row-cols-auto" style="background-color: springgreen">
         <div class="col-7">
             <input class='form-control-plaintext task-list-name' type="text" name="name" id="name"
                 value="{{ task_list.name }}"
@@ -26,6 +26,9 @@
             <button class="btn my-icon-class" onclick="show_burndown_graph({{ task_list.id }});" data-bs-toggle="modal"
                 data-bs-target="#burndown-chart-modal" title="burndown graph">
                 <i class="bi bi-graph-down"></i>
+            </button>
+            <button class="btn my-icon-class" title="sprint feeling" onclick="not_implemented();">
+                <i class="bi bi-emoji-smile"></i>
             </button>
             {% if task_list.observation %}
             <button class="btn my-icon-class" data-bs-toggle="modal" data-bs-target="#details-editor-modal"
