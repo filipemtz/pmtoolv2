@@ -1,0 +1,16 @@
+{% extends "scrum/base.html" %}
+
+{% block content %}
+<h1>Project List</h1>
+{% if project_list %}
+<ul>
+    {% for project in project_list %}
+    <li>
+        <a href="{{ project.get_absolute_url }}">{{ project.name }}</a>
+    </li>
+    {% endfor %}
+</ul>
+{% else %}
+<div id="instructions">Click the plus button to create a new project.</div>
+{% endif %}
+{% endblock %}

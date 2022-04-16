@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User
 from django.contrib.auth import login, authenticate
 from django.utils import timezone
+from django.views import generic
 from .models import Project, Task, TaskList, TaskListType, TaskStatus, TaskWorkload
 from django.http import HttpResponse, HttpResponseNotFound
 from django.template import loader
@@ -23,6 +24,14 @@ font = {
     'size': 14,
 }
 matplotlib.rc('font', **font)
+
+
+class ProjectListView(generic.ListView):
+    model = Project
+
+
+class ProjectDetailView(generic.DetailView):
+    model = Project
 
 
 def render_task(task: Task) -> str:
@@ -336,10 +345,11 @@ def signup_is_valid(request):
 
 def signup_user(request):
     new_user = User.objects.create_user(
-        request.POST['firstname'],
+        request.POST['username'],
         request.POST['email'],
         request.POST['password'])
-    new_user.lastname = request.POST['lastname']
+    new_user.first_name = request.POST['firstname']
+    new_user.last_name = request.POST['lastname']
     new_user.save()
 
 

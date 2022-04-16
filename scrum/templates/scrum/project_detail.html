@@ -1,0 +1,19 @@
+{% extends "scrum/base.html" %}
+
+{% block content %}
+<h1>Project {{project.name}}</h1>
+
+<h2>Team</h2>
+{% if project.team %}
+<ul>
+    {% for team_member in project.team.all %}
+    <li>
+        {{ team_member.username }}
+    </li>
+    {% endfor %}
+</ul>
+{% else %}
+<div id="instructions">Click the plus button to add users to the project.</div>
+{% endif %}
+
+{% endblock %}

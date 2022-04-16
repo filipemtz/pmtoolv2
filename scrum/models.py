@@ -3,7 +3,8 @@ from __future__ import annotations  # recursive type hints
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils.translation import gettext_lazy as _
-from .src.utils import NamedEnum
+from django.utils import timezone
+from django.urls import reverse
 
 
 class Project(models.Model):
@@ -12,6 +13,10 @@ class Project(models.Model):
 
     def __str__(self):
         return self.name
+
+    def get_absolute_url(self):
+        """Returns the URL to access a detail record for this book."""
+        return reverse('project', args=[str(self.id)])
 
 
 class TaskWorkload(models.TextChoices):
@@ -74,6 +79,9 @@ class Task(models.Model):
     placement = models.ForeignKey(TaskList, on_delete=models.CASCADE)
     status_update = models.DateTimeField()
     observation = models.TextField(blank=True, default='')
+    duration = models.IntegerField(default=0)
+    start_date = models.DateField(default=timezone.now, blank=True)
+    end_date = models.DateField(default=timezone.now, blank=True)
 
     @classmethod
     def highest_priority_task(cls):

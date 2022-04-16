@@ -184,7 +184,6 @@ function make_task_lists_sortable() {
                 update_task_priorities($(this).sortable("toArray"));
             }
         })
-        $(this).disableSelection();
     });
 }
 
