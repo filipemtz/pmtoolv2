@@ -30,5 +30,6 @@ urlpatterns = [
     path('project/update', views.update_project, name="update_project"),
     path('project/remove', views.remove_project, name="remove_project"),
     path('project_details_form', views.project_details_form,
-         name='project_details_form')
+         name='project_details_form'),
+    path('speed_chart', views.speed_chart, name="speed_chart"),
 ]

@@ -185,6 +185,7 @@ function show_task_list_details_form(task_list_id) {
 
 }
 
+
 function make_task_lists_sortable() {
     $(".tasks").each(function (index) {
         $(this).sortable({

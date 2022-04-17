@@ -42,11 +42,7 @@
     <!-- navigation bar -->
     <nav class="navbar navbar-dark bg-dark navbar-expand-lg">
         <div class="main-content container-fluid">
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse"
-                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse d-flex">
+            <div class="navbar-collapse d-flex">
                 <div class="p-2 flex-grow-1">
                     <ul class="navbar-nav">
                         <li class="nav-text">
@@ -62,6 +58,13 @@
                     <button type="button" class="btn btn-sm btn-primary"
                         onclick='append_new_empty_task_list({{ project.id }})'>new
                         sprint</button>
+                </div>
+                <div class="p-2">
+                    <button class="btn my-icon-class" style="color: white; font-size:14pt" title='team speed'
+                        data-bs-toggle="modal" data-bs-target="#burndown-chart-modal"
+                        onclick="show_team_speed_chart({{ project.id }});">
+                        <i class="bi bi-speedometer"></i>
+                    </button>
                 </div>
                 <div class="p-2">
                     <button class="btn my-icon-class" style="color: white; font-size:14pt"
@@ -94,6 +97,23 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div id='details-form-placeholder' class="modal-body">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- chart modal -->
+    <div id='burndown-chart-modal' class="modal fade" tabindex="-1">
+        <div class="modal-dialog" id="burndown-modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Burndown Chart</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div id='burndown-chart-modal-image' class="modal-body center">
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>

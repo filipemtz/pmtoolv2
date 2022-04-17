@@ -532,3 +532,29 @@ def remove_project(request):
 def project_details_form(request):
     project = get_object_or_404(Project, id=request.POST['project_id'])
     return render(request, 'scrum/project_details.html', {'project': project})
+
+
+def speed_chart(request):
+    project = get_object_or_404(Project, id=request.POST['project_id'])
+    sprints = TaskList.objects.filter(
+        project=project, task_list_type=TaskListType.SPRINT)
+
+    sprint_dates = [s.end_date for s in sprints]
+    team_speed = [s.n_points_completed() for s in sprints]
+
+    fig, ax = plt.subplots(figsize=(10, 5))
+    ax.plot(sprint_dates, team_speed, marker='o')
+    ax.set_ylabel('Total Task Points')
+    ax.set_xlabel('Sprint Date')
+    ax.yaxis.set_major_locator(MaxNLocator(integer=True))
+    ax.legend(['Team'])
+    plt.tight_layout()
+
+    # extracted from https://medium.com/@mdhv.kothari99/matplotlib-into-django-template-5def2e159997
+    # extracted from https://spapas.github.io/2021/02/08/django-matplotlib/#:~:text=If%20instead%20of,graph%20directly%C2%A0there!
+    buf = io.BytesIO()
+    fig.savefig(buf, format='png', dpi=300)
+    buf_as_string = base64.b64encode(buf.getvalue()).decode()
+    uri = urllib.parse.quote(buf_as_string)
+
+    return render(request, 'scrum/burndown.html', {'data': uri})

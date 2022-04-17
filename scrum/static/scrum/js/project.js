@@ -103,3 +103,18 @@ function show_project_editor_form(project_id) {
         page_alert('fail', FAIL_CLASS, fadeOutTime = 1);
     });
 }
+
+function show_team_speed_chart(project_id) {
+    $.ajax({
+        method: "POST",
+        url: "speed_chart",
+        mode: 'same-origin', // Do not send CSRF token to another domain.
+        data: {
+            'project_id': project_id,
+        }
+    }).done(function (data) {
+        $("#burndown-chart-modal-image").html(data);
+    }).fail(function (data) {
+        page_alert('fail', FAIL_CLASS, fadeOutTime = 1);
+    });
+}

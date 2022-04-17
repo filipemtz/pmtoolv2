@@ -1,4 +1,5 @@
-from __future__ import annotations  # recursive type hints
+from __future__ import annotations
+from typing import List  # recursive type hints
 
 from django.db import models
 from django.contrib.auth.models import User
@@ -105,6 +106,30 @@ class TaskList(models.Model):
 
     class Meta:
         ordering = ['-created_at']
+
+    def completed_tasks(self) -> List[Task]:
+        return [t for t in self.task_set.all() if t.status == TaskStatus.DONE]
+
+    def n_completed_tasks(self) -> int:
+        return len(self.completed_tasks())
+
+    def n_points_completed(self) -> int:
+        return sum([TaskWorkload.as_int(t.workload) for t in self.completed_tasks()])
+
+    def total_points(self):
+        return sum([TaskWorkload.as_int(t.workload) for t in self.task_set.all()])
+
+    def percentual_tasks_completed(self):
+        n_tasks = self.task_set.count()
+        if n_tasks == 0:
+            return 0
+        return int(100 * self.n_completed_tasks() / n_tasks)
+
+    def percentual_points_completed(self):
+        total = self.total_points()
+        if total == 0:
+            return 0
+        return int(100 * self.n_points_completed() / total)
 
     def __str__(self):
         return f"(name={self.name}, created_at={self.created_at}, project={self.project}, start={self.start_date}, end={self.end_date})"

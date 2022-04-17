@@ -32,6 +32,11 @@ textarea,
     padding-right: 0%;
 }
 
+.vertical-align-center {
+    margin-top: auto;
+    margin-bottom: auto;
+}
+
 input {
     text-overflow: ellipsis;
 }
