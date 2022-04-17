@@ -1,11 +1,17 @@
 {% extends "scrum/base.html" %}
 
 {% block content %}
-<h1>Project List</h1>
+
+<b>User Projects</b>
+<br>
+<br>
 {% if project_list %}
-<ul>
+<ul id="project-list">
     {% for project in project_list %}
-    <li>
+    <li id="project_{{ project.id }}">
+        <button style="color:red; background-color: white; border: none" onclick="remove_project({{ project.id }});"><i
+                class="bi bi-x-lg "></i></button>
+
         <a href="{{ project.get_absolute_url }}">{{ project.name }}</a>
     </li>
     {% endfor %}
@@ -13,4 +19,12 @@
 {% else %}
 <div id="instructions">Click the plus button to create a new project.</div>
 {% endif %}
+
+<button id='new_project_btn' class="btn" onclick="add_new_empty_project()">
+    <i class="bi bi-plus-lg"></i>
+</button>
+
+{% load static %}
+<script type="text/javascript" src="{% static 'scrum/js/project.js' %}"></script>
+
 {% endblock %}

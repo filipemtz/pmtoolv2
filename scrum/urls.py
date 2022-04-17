@@ -22,4 +22,11 @@ urlpatterns = [
     path('test', views.test_view, name="test_view"),
     path('projects', views.ProjectListView.as_view(), name="projects"),
     path('project/<int:pk>', views.ProjectDetailView.as_view(), name="project"),
+    path('project/add_team_member',
+         views.add_team_member, name="add_team_member"),
+    path('project/remove_team_member',
+         views.remove_team_member, name="remove_team_member"),
+    path('project/new', views.new_project, name="new_project"),
+    path('project/update', views.update_project, name="update_project"),
+    path('project/remove', views.remove_project, name="remove_project"),
 ]

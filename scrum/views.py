@@ -3,7 +3,7 @@ from django.contrib.auth import login, authenticate
 from django.utils import timezone
 from django.views import generic
 from .models import Project, Task, TaskList, TaskListType, TaskStatus, TaskWorkload
-from django.http import HttpResponse, HttpResponseNotFound
+from django.http import Http404, HttpResponse, HttpResponseBadRequest, HttpResponseNotFound
 from django.template import loader
 from django.shortcuts import get_object_or_404, redirect, render
 from typing import Dict, List
@@ -71,7 +71,7 @@ def project_selector(selected_value: int = -1):
     all_objs = Project.objects.all()
     options = [{'name': o.name, 'value': o.id,
                 'selected': selected_value == o.id} for o in all_objs]
-    onselect_event = "page_alert('multiproject is not implemented yet', INFO_CLASS, fadeOutTime = 2);"
+    onselect_event = "load_project_scrum($(this).val());"
     return render_selector(options, name='project', id='project', onselect_event=onselect_event)
 
 
@@ -277,6 +277,7 @@ def create_burndown_chart(request):
     plt.tight_layout()
 
     # extracted from https://medium.com/@mdhv.kothari99/matplotlib-into-django-template-5def2e159997
+    # extracted from https://spapas.github.io/2021/02/08/django-matplotlib/#:~:text=If%20instead%20of,graph%20directly%C2%A0there!
     buf = io.BytesIO()
     fig.savefig(buf, format='png', dpi=300)
     buf_as_string = base64.b64encode(buf.getvalue()).decode()
@@ -287,7 +288,20 @@ def create_burndown_chart(request):
 
 @login_required
 def index(request):
-    project_id = 1
+    if "project_id" not in request.GET:
+        user_projects = Project.objects.filter(team__id=request.user.id)
+        if user_projects.count() > 0:
+            project_id = user_projects.first().id
+        else:
+            return render(request, 'scrum/index.html', {
+                'project': '',
+                'project_selector': project_selector(),
+                'task_lists_html': [],
+            })
+
+    else:
+        project_id = int(request.GET['project_id'])
+
     project = get_object_or_404(Project, pk=project_id)
     task_lists = TaskList.objects.filter(project=project)
 
@@ -296,9 +310,11 @@ def index(request):
     for i in range(len(task_lists)):
         t = task_lists[i]
         if t.task_list_type == TaskListType.BACKLOG:
-            tasks_lists_html.append(render_task_list(t, 'scrum/backlog.html'))
+            tasks_lists_html.append(
+                render_task_list(t, 'scrum/backlog.html'))
         else:
-            tasks_lists_html.append(render_task_list(t, 'scrum/sprint.html'))
+            tasks_lists_html.append(
+                render_task_list(t, 'scrum/sprint.html'))
 
     project_html = project_selector(project_id)
 
@@ -365,8 +381,63 @@ def signup_form(request):
                 password=request.POST['password']
             )
             login(request, user)
-            return redirect('/scrum')
+            return redirect('/scrum/projects')
 
     return render(request, 'registration/signup.html', {
         'error_msgs': error_msgs
     })
+
+
+def add_team_member(request):
+    project = get_object_or_404(Project, id=request.POST['project_id'])
+    new_user = get_object_or_404(User, username=request.POST['username'])
+    project.team.add(new_user)
+    project.save()
+
+    return HttpResponse(new_user.username)
+
+
+def remove_team_member(request):
+    project = get_object_or_404(Project, id=request.POST['project_id'])
+    user = get_object_or_404(User, id=request.POST['user_id'])
+
+    if project.team.count() > 1:
+        project.team.remove(user)
+        project.save()
+        return HttpResponse("ok")
+    else:
+        return HttpResponseBadRequest("Team must have at least one user.")
+
+
+def new_project(request):
+    project = Project(name="new project")
+    project.save()
+    project.team.add(request.user)
+    project.save()
+
+    backlog = TaskList(
+        name="Backlog",
+        created_at=timezone.now(),
+        project=project,
+        archived=False,
+        start_date=timezone.now(),
+        end_date=timezone.now(),
+        task_list_type=TaskListType.BACKLOG,
+    )
+    backlog.save()
+
+    html = f"<li><button style='color:red; background-color: white; border: none' onclick='remove_project({{ project.id }});'><i class='bi bi-x-lg'></i></button><a href='{project.get_absolute_url()}'>{project.name}</a></li>"
+    return HttpResponse(html)
+
+
+def update_project(request):
+    project = get_object_or_404(Project, id=request.POST['project_id'])
+    project.name = request.POST['name']
+    project.save()
+    return HttpResponse('ok')
+
+
+def remove_project(request):
+    project = get_object_or_404(Project, id=request.POST['project_id'])
+    project.delete()
+    return HttpResponse('ok')

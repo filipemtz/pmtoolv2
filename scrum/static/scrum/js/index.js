@@ -20,3 +20,7 @@ function page_alert(message, style_class, fadeOutTime = -1) {
 function not_implemented() {
     page_alert('not implemented yet', INFO_CLASS, fadeOutTime = 2);
 }
+
+function load_project_scrum(project_id) {
+    window.location.replace("/scrum?project_id=" + project_id);
+}
