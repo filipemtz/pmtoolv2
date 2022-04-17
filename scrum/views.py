@@ -101,8 +101,8 @@ def feeling_selector(selected_value: str = '', onselect_event: str = '') -> str:
     )
 
 
-def project_selector(selected_value: int = -1):
-    all_objs = Project.objects.all()
+def project_selector(user, selected_value: int = -1):
+    user_projects = Project.objects.filter(team__id=user.id)
 
     options = [
         {
@@ -110,7 +110,7 @@ def project_selector(selected_value: int = -1):
             'value': o.id,
             'selected': selected_value == o.id
         }
-        for o in all_objs
+        for o in user_projects
     ]
 
     options.append({
@@ -363,7 +363,7 @@ def create_burndown_chart(request):
 @login_required
 def index(request):
     create_sample_project = False
-    
+
     if "project_id" not in request.GET:
         user_projects = Project.objects.filter(team__id=request.user.id)
         if user_projects.count() > 0:
@@ -394,11 +394,11 @@ def index(request):
             tasks_lists_html.append(
                 render_task_list(t, 'scrum/sprint.html'))
 
-    project_html = project_selector(project_id)
+    project_select_html = project_selector(request.user, project_id)
 
     return render(request, 'scrum/index.html', {
         'project': project,
-        'project_selector': project_html,
+        'project_selector': project_select_html,
         'task_lists_html': tasks_lists_html,
     })
 
