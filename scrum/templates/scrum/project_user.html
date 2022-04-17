@@ -1,0 +1,10 @@
+<div class='row' id="user_{{ team_member.id }}">
+    <div class='col-1 team-member'>
+        <button style="color:red; background-color: white; border: none"
+            onclick="remove_user_from_team({{ project.id }}, {{ team_member.id }});"><i
+                class="bi bi-x-lg "></i></button>
+    </div>
+    <div class='col-11 team-member'>
+        {{ team_member.username }}
+    </div>
+</div>

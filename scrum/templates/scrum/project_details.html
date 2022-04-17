@@ -1,0 +1,55 @@
+<div id="project_editor_form">
+    <div>
+        <input class='form-control-plaintext h3' type="text" name="name" id="name" value="{{ project.name }}"
+            onkeypress="if (event.which == 13) save_project({{ project.id }});" />
+    </div>
+
+    <br>
+
+    <div><b>Team Members</b></div>
+
+    <br />
+
+    {% if project.team %}
+    <div id="team">
+        {% for team_member in project.team.all %}
+        <div class='row' id="user_{{ team_member.id }}">
+            <div class='col-1 team-member'>
+                <button style="color:red; background-color: white; border: none"
+                    onclick="remove_user_from_team({{ project.id }}, {{ team_member.id }});"><i
+                        class="bi bi-x-lg "></i></button>
+            </div>
+            <div class='col-11 team-member'>
+                {{ team_member.username }}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div id="instructions">Click the plus button to add users to the project.</div>
+    {% endif %}
+
+    <br />
+
+    <div class="row">
+        <div class="col">
+            <input type="text" name="new_team_member" id="new_team_member" class="form-control" placeholder="username">
+        </div>
+    </div>
+    <br>
+    <div class="row">
+        <div class="col">
+            <button class="btn btn-primary" onclick="add_team_member({{ project.id }});">Add team member</button>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col text-end">
+            <button class="btn btn-danger" onclick="remove_project({{ project.id }});">Delete</button>
+        </div>
+    </div>
+
+    {% load static %}
+    <script type="text/javascript" src="{% static 'scrum/js/project.js' %}"></script>
+
+</div>

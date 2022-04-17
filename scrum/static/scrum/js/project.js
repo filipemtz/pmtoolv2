@@ -2,14 +2,14 @@
 function add_team_member(project_id) {
     $.ajax({
         method: "POST",
-        url: "add_team_member",
+        url: "/scrum/project/add_team_member",
         mode: 'same-origin', // Do not send CSRF token to another domain.
         data: {
             'project_id': project_id,
             'username': $("#new_team_member").val(),
         }
     }).done(function (data) {
-        $("#team").append("<div class='team-member'>" + data + "</div>");
+        $("#team").append(data);
         page_alert('saved', SUCCESS_CLASS, fadeOutTime = 0.5);
     }).fail(function (data) {
         page_alert('fail', FAIL_CLASS, fadeOutTime = 1);
@@ -20,7 +20,7 @@ function add_team_member(project_id) {
 function remove_user_from_team(project_id, user_id) {
     $.ajax({
         method: "POST",
-        url: "remove_team_member",
+        url: "/scrum/project/remove_team_member",
         mode: 'same-origin', // Do not send CSRF token to another domain.
         data: {
             'project_id': project_id,
@@ -51,15 +51,17 @@ function add_new_empty_project() {
 
 
 function save_project(project_id) {
+    new_name = $("#project_editor_form").find("#name").val();
     $.ajax({
         method: "POST",
-        url: "update",
+        url: "/scrum/project/update",
         mode: 'same-origin', // Do not send CSRF token to another domain.
         data: {
             "project_id": project_id,
-            "name": $("#name").val(),
+            "name": new_name,
         }
     }).done(function (data) {
+        $("#project").find("option:selected").text(new_name);
         page_alert('saved', SUCCESS_CLASS, fadeOutTime = 0.5);
     }).fail(function (data) {
         page_alert('fail', FAIL_CLASS, fadeOutTime = 1);
@@ -78,9 +80,26 @@ function remove_project(project_id) {
             }
         }).done(function (data) {
             $("#project_" + project_id).remove();
-            page_alert('removed', SUCCESS_CLASS, fadeOutTime = 0.5);
+            //page_alert('removed', SUCCESS_CLASS, fadeOutTime = 0.5);
+            window.location.replace("/scrum");
         }).fail(function (data) {
             page_alert('fail', FAIL_CLASS, fadeOutTime = 1);
         });
     }
+}
+
+
+function show_project_editor_form(project_id) {
+    $.ajax({
+        method: "POST",
+        url: "project_details_form",
+        mode: 'same-origin', // Do not send CSRF token to another domain.
+        data: {
+            'project_id': project_id,
+        }
+    }).done(function (data) {
+        $("#details-form-placeholder").html(data);
+    }).fail(function (data) {
+        page_alert('fail', FAIL_CLASS, fadeOutTime = 1);
+    });
 }

@@ -103,17 +103,42 @@ def feeling_selector(selected_value: str = '', onselect_event: str = '') -> str:
 
 def project_selector(selected_value: int = -1):
     all_objs = Project.objects.all()
-    options = [{'name': o.name, 'value': o.id,
-                'selected': selected_value == o.id} for o in all_objs]
+
+    options = [
+        {
+            'name': o.name,
+            'value': o.id,
+            'selected': selected_value == o.id
+        }
+        for o in all_objs
+    ]
+
+    options.append({
+        'name': '+ new project',
+        'value': 'new',
+        'selected': False
+    })
+
     onselect_event = "load_project_scrum($(this).val());"
-    return render_selector(options, name='project', id='project', onselect_event=onselect_event)
+
+    return render_selector(
+        options, name='project', id='project', onselect_event=onselect_event)
 
 
 def workload_selector(selected_value: str = '', onselect_event: str = ''):
     all_objs = TaskWorkload.choices
-    options = [{'name': o[1], 'value': o[0],
-                'selected': selected_value == o[0]} for o in all_objs]
-    return render_selector(options, name='workload', id='workload', onselect_event=onselect_event)
+
+    options = [
+        {
+            'name': o[1],
+            'value': o[0],
+            'selected': selected_value == o[0]
+        }
+        for o in all_objs
+    ]
+
+    return render_selector(
+        options, name='workload', id='workload', onselect_event=onselect_event)
 
 
 def update_task(request):
@@ -337,19 +362,23 @@ def create_burndown_chart(request):
 
 @login_required
 def index(request):
+    create_sample_project = False
+    
     if "project_id" not in request.GET:
         user_projects = Project.objects.filter(team__id=request.user.id)
         if user_projects.count() > 0:
             project_id = user_projects.first().id
         else:
-            return render(request, 'scrum/index.html', {
-                'project': '',
-                'project_selector': project_selector(),
-                'task_lists_html': [],
-            })
-
+            # user does not have projects
+            create_sample_project = True
+    elif (request.GET['project_id'] == 'new'):
+        create_sample_project = True
     else:
         project_id = int(request.GET['project_id'])
+
+    if create_sample_project:
+        project = create_project(request.user)
+        project_id = project.id
 
     project = get_object_or_404(Project, pk=project_id)
     task_lists = TaskList.objects.filter(project=project)
@@ -430,7 +459,7 @@ def signup_form(request):
                 password=request.POST['password']
             )
             login(request, user)
-            return redirect('/scrum/projects')
+            return redirect('/scrum/')
 
     return render(request, 'registration/signup.html', {
         'error_msgs': error_msgs
@@ -439,11 +468,15 @@ def signup_form(request):
 
 def add_team_member(request):
     project = get_object_or_404(Project, id=request.POST['project_id'])
-    new_user = get_object_or_404(User, username=request.POST['username'])
-    project.team.add(new_user)
+    new_team_member = get_object_or_404(
+        User, username=request.POST['username'])
+    project.team.add(new_team_member)
     project.save()
 
-    return HttpResponse(new_user.username)
+    return render(request, 'scrum/project_user.html', {
+        'project': project,
+        'team_member': new_team_member,
+    })
 
 
 def remove_team_member(request):
@@ -458,10 +491,10 @@ def remove_team_member(request):
         return HttpResponseBadRequest("Team must have at least one user.")
 
 
-def new_project(request):
-    project = Project(name="new project")
+def create_project(user, name='New Project'):
+    project = Project(name=name)
     project.save()
-    project.team.add(request.user)
+    project.team.add(user)
     project.save()
 
     backlog = TaskList(
@@ -474,7 +507,11 @@ def new_project(request):
         task_list_type=TaskListType.BACKLOG,
     )
     backlog.save()
+    return project
 
+
+def new_project(request):
+    project = create_project(request.user)
     html = f"<li><button style='color:red; background-color: white; border: none' onclick='remove_project({{ project.id }});'><i class='bi bi-x-lg'></i></button><a href='{project.get_absolute_url()}'>{project.name}</a></li>"
     return HttpResponse(html)
 
@@ -490,3 +527,8 @@ def remove_project(request):
     project = get_object_or_404(Project, id=request.POST['project_id'])
     project.delete()
     return HttpResponse('ok')
+
+
+def project_details_form(request):
+    project = get_object_or_404(Project, id=request.POST['project_id'])
+    return render(request, 'scrum/project_details.html', {'project': project})

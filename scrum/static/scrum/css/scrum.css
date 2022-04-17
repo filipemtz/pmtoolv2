@@ -104,3 +104,13 @@ input {
 li {
     list-style-type: none;
 }
+
+.project_selector select {
+    background-color: rgb(var(--bs-dark-rgb));
+    color: white;
+}
+
+.project_selector option {
+    background-color: rgb(var(--bs-dark-rgb));
+    color: white;
+}

@@ -10,6 +10,7 @@ function append_new_empty_task_list(project_id) {
     }).done(function (data) {
         $("#task_lists").prepend(data);
         make_task_lists_sortable();
+        make_dates_pickable();
     }).fail(function (data) {
         page_alert('fail', FAIL_CLASS, fadeOutTime = 1);
     });
