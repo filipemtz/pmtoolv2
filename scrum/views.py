@@ -2,7 +2,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import login, authenticate
 from django.utils import timezone
 from django.views import generic
-from .models import Project, Task, TaskList, TaskListType, TaskStatus, TaskWorkload
+from .models import Project, Task, TaskList, TaskListFeeling, TaskListType, TaskStatus, TaskWorkload
 from django.http import Http404, HttpResponse, HttpResponseBadRequest, HttpResponseNotFound
 from django.template import loader
 from django.shortcuts import get_object_or_404, redirect, render
@@ -60,11 +60,45 @@ def render_selector(options: List[Dict], name: str, id, onselect_event: str = ''
     return status_selector_html
 
 
+def render_image_selector(options: List[Dict], name: str, id, onselect_event: str = '') -> str:
+    status_selector_html = loader.get_template('scrum/img_selector.html').render({
+        "name": name,
+        "id": id,
+        "options": options,
+        'onselect_event': onselect_event,
+    })
+    return status_selector_html
+
+
 def status_selector(selected_value: str = '', onselect_event: str = '') -> str:
     all_status = TaskStatus.choices
     status_options = [{'name': s[1], 'value': s[0],
                        'selected': selected_value == s[0]} for s in all_status]
     return render_selector(status_options, name='status', id='status', onselect_event=onselect_event)
+
+
+def feeling_selector(selected_value: str = '', onselect_event: str = '') -> str:
+    all_status = TaskListFeeling.choices
+
+    if selected_value == '':
+        selected_value = 'UN'
+
+    status_options = [
+        {
+            'name': TaskListFeeling.as_emoji(s),
+            'value': s[0],
+            'description': s[1].capitalize(),
+            'selected': selected_value == s[0],
+        }
+        for s in all_status
+    ]
+
+    return render_image_selector(
+        status_options,
+        name='feeling',
+        id='feeling',
+        onselect_event=onselect_event
+    )
 
 
 def project_selector(selected_value: int = -1):
@@ -126,8 +160,15 @@ def task_details_form(request):
 
 def task_list_details_form(request):
     task_list = get_object_or_404(TaskList, id=request.POST['task_list_id'])
+
+    feeling = feeling_selector(
+        task_list.feeling,
+        onselect_event=f"update_task_list({task_list.id}, false);"
+    )
+
     return render(request, 'scrum/sprint_details.html', {
         'task_list': task_list,
+        'feeling_selector': feeling,
     })
 
 
@@ -162,9 +203,14 @@ def create_empty_task(request):
 def render_task_list(task_list: TaskList, template: str) -> str:
     subtasks = Task.objects.filter(placement=task_list)
     subtasks_html = [render_task(t) for t in subtasks]
+    feeling = feeling_selector(
+        task_list.feeling,
+        onselect_event=f"update_task_list({task_list.id}, false);"
+    )
     task_list_html = loader.get_template(template).render({
         "task_list": task_list,
         "subtasks": subtasks_html,
+        "feeling_selector": feeling,
     })
     return task_list_html
 
@@ -206,6 +252,9 @@ def update_task_list(request):
 
     if 'observation' in request.POST:
         task_list.observation = request.POST['observation']
+
+    if 'feeling' in request.POST:
+        task_list.feeling = request.POST['feeling']
 
     task_list.save()
 

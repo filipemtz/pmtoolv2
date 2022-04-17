@@ -33,14 +33,24 @@
         </div>
     </div>
 
+    <div class="row">
+        <div class="col">
+            Sprint Feeling:
+        </div>
+        <div class="col">
+            {{ feeling_selector }}
+        </div>
+    </div>
+
+    <br>
     <div>
         <label for="observation" class="form-label">Observations (issues, opportunities, retrospective, etc.)</label>
         <textarea id="observation" name="observation" class="form-control small-font"
             rows="7">{{ task_list.observation }}</textarea>
     </div>
     <div class="row" style="padding-top:10px">
-        <div class="col"><button class="btn btn-success"
-                onclick="update_task_list({{ task_list.id }}, false);">save</button></div>
+        <div class="col"><button class="btn btn-success" onclick="update_task_list({{ task_list.id }}, false);">save
+                observation</button></div>
     </div>
 
 </div>

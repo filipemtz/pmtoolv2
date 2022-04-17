@@ -51,6 +51,41 @@ class TaskListType(models.TextChoices):
     SPRINT = 'SP', _('sprint')
 
 
+class TaskListFeeling(models.TextChoices):
+    SUPERB = 'SB', _('SUPERB')
+    HAPPY = 'HP', _('HAPPY')
+    REGULAR = 'RE', _('REGULAR')
+    SAD = 'SD', _('SAD')
+    ANGRY = 'AG', _('ANGRY')
+    UNDEFINED = 'UN', _('UNDEFINED')
+
+    @classmethod
+    def as_int(cls, val: TaskListFeeling) -> int:
+        mapper = {
+            TaskListFeeling.SUPERB: 2,
+            TaskListFeeling.HAPPY: 1,
+            TaskListFeeling.REGULAR: 0,
+            TaskListFeeling.SAD: -1,
+            TaskListFeeling.ANGRY: -2,
+            TaskListFeeling.UNDEFINED: 0,
+        }
+
+        return mapper[val[0]]
+
+    @classmethod
+    def as_emoji(cls, val: TaskListFeeling) -> str:
+        mapper = {
+            TaskListFeeling.SUPERB: "128525",
+            TaskListFeeling.HAPPY: "128522",
+            TaskListFeeling.REGULAR: "128528",
+            TaskListFeeling.SAD: "128542",
+            TaskListFeeling.ANGRY: "128545",
+            TaskListFeeling.UNDEFINED: "128156",
+        }
+
+        return mapper[val[0]]
+
+
 class TaskList(models.Model):
     name = models.CharField(max_length=100)
     created_at = models.DateTimeField()
@@ -63,6 +98,10 @@ class TaskList(models.Model):
         choices=TaskListType.choices,
         default=TaskListType.SPRINT)
     observation = models.TextField(blank=True, default='')
+    feeling = models.TextField(
+        max_length=2,
+        choices=TaskListFeeling.choices,
+        default=TaskListFeeling.UNDEFINED)
 
     class Meta:
         ordering = ['-created_at']

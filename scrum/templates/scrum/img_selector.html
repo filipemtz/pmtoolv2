@@ -1,0 +1,13 @@
+<select name="{{ name }}" id="{{ id }}" class='form-control-plaintext' onChange="{{ onselect_event }}"
+    style="padding:0px; margin: 0px; font-size: 12pt" title="sprint feeling">
+    {% for option in options %}
+    {% if option.selected is True %}
+    <option value="{{ option.value }}" style="font-size: 12pt" title="{{option.description}}" selected>
+        &#{{ option.name }};
+    </option>
+    {% else %}
+    <option value="{{ option.value }}" style="font-size: 12pt" title="{{option.description}}">&#{{ option.name }};
+    </option>
+    {% endif %}
+    {% endfor %}
+</select>

@@ -51,6 +51,7 @@ function update_task_list_from_modal(modal_name, task_list_id) {
             'start_date': $(modal_name).find('#date_start_' + task_list_id).val(),
             'end_date': $(modal_name).find('#date_end_' + task_list_id).val(),
             'observation': $(modal_name).find("#observation").val(),
+            'feeling': $(modal_name).find("#feeling").val(),
             'toggle_archived': 'false',
         }
     }).done(function (data) {
@@ -68,17 +69,24 @@ function update_task_list_from_modal(modal_name, task_list_id) {
 function update_task_list_from_row(task_list_id, toggle_archived) {
     form_name = "#task_list_" + task_list_id;
 
+    data = {
+        'task_list_id': task_list_id,
+        'name': $(form_name).find('#name').val(),
+        'start_date': $(form_name).find('#date_start_' + task_list_id).val(),
+        'end_date': $(form_name).find('#date_end_' + task_list_id).val(),
+        'toggle_archived': toggle_archived,
+    }
+
+    feeling = $(form_name).find("#feeling");
+
+    if (feeling)
+        data['feeling'] = feeling.val();
+
     $.ajax({
         method: "POST",
         url: "update_task_list",
         mode: 'same-origin', // Do not send CSRF token to another domain.
-        data: {
-            'task_list_id': task_list_id,
-            'name': $(form_name).find('#name').val(),
-            'start_date': $(form_name).find('#date_start_' + task_list_id).val(),
-            'end_date': $(form_name).find('#date_end_' + task_list_id).val(),
-            'toggle_archived': toggle_archived,
-        }
+        data: data
     }).done(function (data) {
         $(form_name).replaceWith(data);
         make_task_lists_sortable();

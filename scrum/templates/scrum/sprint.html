@@ -27,9 +27,9 @@
                 data-bs-target="#burndown-chart-modal" title="burndown graph">
                 <i class="bi bi-graph-down"></i>
             </button>
-            <button class="btn my-icon-class" title="sprint feeling" onclick="not_implemented();">
-                <i class="bi bi-emoji-smile"></i>
-            </button>
+
+            <div class="btn my-icon-class">{{ feeling_selector }}</div>
+
             {% if task_list.observation %}
             <button class="btn my-icon-class" data-bs-toggle="modal" data-bs-target="#details-editor-modal"
                 onclick="show_task_list_details_form({{ task_list.id }});" title="edit details" style="color: blue;">
