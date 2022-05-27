@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 
+import json
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -74,10 +75,16 @@ WSGI_APPLICATION = 'pmtoolv2.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
+if not Path("config.json").exists():
+    raise FileNotFoundError("Copy and edit the config-sample.json file into config.json .")
+
+with open("config.json", "r") as f:
+    data = json.load(f)
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': 'C:/Users/filip/OneDrive/site/pmtoolv2.sqlite3',
+        'NAME': data["db"],
     }
 }
 
