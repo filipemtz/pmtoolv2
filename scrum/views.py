@@ -50,12 +50,13 @@ def render_task(task: Task) -> str:
     return task_html
 
 
-def render_selector(options: List[Dict], name: str, id, onselect_event: str = '') -> str:
+def render_selector(options: List[Dict], name: str, id, onselect_event: str = '', selector_class='') -> str:
     status_selector_html = loader.get_template('scrum/selector.html').render({
         "name": name,
         "id": id,
         "options": options,
         'onselect_event': onselect_event,
+        'selector_class': selector_class,
     })
     return status_selector_html
 
@@ -72,9 +73,31 @@ def render_image_selector(options: List[Dict], name: str, id, onselect_event: st
 
 def status_selector(selected_value: str = '', onselect_event: str = '') -> str:
     all_status = TaskStatus.choices
-    status_options = [{'name': s[1], 'value': s[0],
-                       'selected': selected_value == s[0]} for s in all_status]
-    return render_selector(status_options, name='status', id='status', onselect_event=onselect_event)
+
+    selector_class = ''
+    status_options = []
+
+    for s in all_status:
+        selected = selected_value == s[0]
+
+        if selected:
+            selector_class = "status_" + s[0]
+
+        status_options.append({
+            'name': s[1],
+            'value': s[0],
+            'selected': selected
+        })
+
+    selector_class += ' center roundbox'
+
+    return render_selector(
+        status_options,
+        name='status',
+        id='status',
+        selector_class=selector_class,
+        onselect_event=onselect_event
+    )
 
 
 def feeling_selector(selected_value: str = '', onselect_event: str = '') -> str:

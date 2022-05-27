@@ -119,3 +119,37 @@ li {
     background-color: rgb(var(--bs-dark-rgb));
     color: white;
 }
+
+.status_DO {
+    background-color: green;
+    color: white;
+}
+
+.status_TD {
+    background-color: red;
+    color: white;
+}
+
+.status_IP {
+    background-color: yellow;
+    color: black;
+}
+
+.status_RV {
+    background-color: yellow;
+    color: black;
+}
+
+.roundbox {
+    border-radius: 10px;
+}
+
+.select_option {
+    background-color: white;
+    color: black;
+}
+
+.select_option_selected {
+    background-color: white;
+    color: black;
+}
