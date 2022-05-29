@@ -1,9 +1,10 @@
+
 from django.contrib.auth.models import User
 from django.contrib.auth import login, authenticate
 from django.utils import timezone
 from django.views import generic
 from .models import Project, Task, TaskList, TaskListFeeling, TaskListType, TaskStatus, TaskWorkload
-from django.http import Http404, HttpResponse, HttpResponseBadRequest, HttpResponseNotFound
+from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseNotFound
 from django.template import loader
 from django.shortcuts import get_object_or_404, redirect, render
 from typing import Dict, List
@@ -438,12 +439,11 @@ def index(request):
     tasks_lists_html = []
 
     sprints = TaskList.objects.filter(
-        project=project, task_list_type=TaskListType.SPRINT, archived=False)
+        project=project, task_list_type=TaskListType.SPRINT)
 
-    for i in range(len(sprints)):
-        t = sprints[i]
-        tasks_lists_html.append(
-            render_task_list(t, 'scrum/sprint.html'))
+    if len(sprints) > 0:
+        tasks_lists_html.append(render_task_list(
+            sprints[0], 'scrum/sprint.html'))
 
     backlog = TaskList.objects.filter(
         project=project, task_list_type=TaskListType.BACKLOG).first()
@@ -456,6 +456,11 @@ def index(request):
     if routine is not None:
         tasks_lists_html.append(render_task_list(
             routine, 'scrum/routine.html'))
+
+    for i in range(1, len(sprints)):
+        t = sprints[i]
+        tasks_lists_html.append(
+            render_task_list(t, 'scrum/sprint.html'))
 
     project_select_html = project_selector(request.user, project_id)
 
