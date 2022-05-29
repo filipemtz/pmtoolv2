@@ -48,6 +48,7 @@ class TaskStatus(models.TextChoices):
 
 
 class TaskListType(models.TextChoices):
+    ROUTINE = 'RT', _('routine')
     BACKLOG = 'BL', _('backlog')
     SPRINT = 'SP', _('sprint')
 

@@ -34,14 +34,22 @@ class ProjectDetailView(generic.DetailView):
     model = Project
 
 
+task_templates = {
+    TaskListType.BACKLOG: "task.html",
+    TaskListType.SPRINT: "task.html",
+    TaskListType.ROUTINE: "routine_task.html",
+}
+
+
 def render_task(task: Task) -> str:
     onselect_event = f"save_task({task.id});"
     status_selector_html = status_selector(
         selected_value=task.status, onselect_event=onselect_event)
     workload_selector_html = workload_selector(
         selected_value=task.workload, onselect_event=onselect_event)
+    task_template = task_templates[task.placement.task_list_type]
 
-    task_html = loader.get_template('scrum/task.html').render({
+    task_html = loader.get_template(f'scrum/{task_template}').render({
         "task": task,
         "workload_selector_html": workload_selector_html,
         "status_selector_html": status_selector_html,
@@ -308,6 +316,8 @@ def update_task_list(request):
 
     if (task_list.task_list_type == TaskListType.BACKLOG):
         template = 'scrum/backlog.html'
+    elif (task_list.task_list_type == TaskListType.BACKLOG):
+        template = 'scrum/routine.html'
     else:
         template = 'scrum/sprint.html'
 
@@ -333,6 +343,26 @@ def empty_task_list(request):
     )
 
     task_list.save()
+
+    # ####################################
+    # add routine tasks into the sprint
+    # ####################################
+    routine = TaskList.objects.filter(
+        project=project, task_list_type=TaskListType.ROUTINE).first()
+
+    if routine is not None:
+        routine_tasks = Task.objects.filter(placement=routine)
+        for counter, task in enumerate(routine_tasks):
+            task = Task(
+                name=task.name,
+                priority=(counter + 1),
+                workload=task.workload,
+                status=TaskStatus.TODO,
+                placement=task_list,
+                status_update=timezone.now(),
+            )
+
+            task.save()
 
     return HttpResponse(render_task_list(task_list, 'scrum/sprint.html'))
 
@@ -404,18 +434,28 @@ def index(request):
         project_id = project.id
 
     project = get_object_or_404(Project, pk=project_id)
-    task_lists = TaskList.objects.filter(project=project)
 
     tasks_lists_html = []
 
-    for i in range(len(task_lists)):
-        t = task_lists[i]
-        if t.task_list_type == TaskListType.BACKLOG:
-            tasks_lists_html.append(
-                render_task_list(t, 'scrum/backlog.html'))
-        else:
-            tasks_lists_html.append(
-                render_task_list(t, 'scrum/sprint.html'))
+    sprints = TaskList.objects.filter(
+        project=project, task_list_type=TaskListType.SPRINT, archived=False)
+
+    for i in range(len(sprints)):
+        t = sprints[i]
+        tasks_lists_html.append(
+            render_task_list(t, 'scrum/sprint.html'))
+
+    backlog = TaskList.objects.filter(
+        project=project, task_list_type=TaskListType.BACKLOG).first()
+
+    tasks_lists_html.append(render_task_list(backlog, 'scrum/backlog.html'))
+
+    routine = TaskList.objects.filter(
+        project=project, task_list_type=TaskListType.ROUTINE).first()
+
+    if routine is not None:
+        tasks_lists_html.append(render_task_list(
+            routine, 'scrum/routine.html'))
 
     project_select_html = project_selector(request.user, project_id)
 
@@ -520,6 +560,16 @@ def create_project(user, name='New Project'):
     project.team.add(user)
     project.save()
 
+    routine = TaskList(
+        name="Routine",
+        created_at=timezone.now(),
+        project=project,
+        archived=False,
+        start_date=timezone.now(),
+        end_date=timezone.now(),
+        task_list_type=TaskListType.ROUTINE,
+    )
+
     backlog = TaskList(
         name="Backlog",
         created_at=timezone.now(),
@@ -529,7 +579,10 @@ def create_project(user, name='New Project'):
         end_date=timezone.now(),
         task_list_type=TaskListType.BACKLOG,
     )
+
     backlog.save()
+    routine.save()
+
     return project
 
 
