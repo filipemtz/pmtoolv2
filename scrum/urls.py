@@ -32,4 +32,5 @@ urlpatterns = [
     path('project_details_form', views.project_details_form,
          name='project_details_form'),
     path('speed_chart', views.speed_chart, name="speed_chart"),
+    path('myactivities', views.my_activities, name="myactivities"),
 ]

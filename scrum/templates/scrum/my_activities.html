@@ -1,0 +1,73 @@
+{% extends 'scrum/base.html' %}
+
+{% block menu %}
+
+<!-- navigation bar -->
+<nav class="navbar navbar-dark bg-dark navbar-expand-lg">
+    <div class="main-content container-fluid">
+        <div class="navbar-collapse d-flex">
+            <div class="p-2 flex-grow-1">
+            </div>
+
+            <div class="p-2">
+                <a href="{% url 'index' %}" class="btn my-icon-class" style="color: white; font-size:14pt">
+                    <i class="bi bi-ui-checks"></i>
+                </a>
+            </div>
+
+            <div class="p-2">
+                <div class="header-text text-center">
+                    {{ user.username }}
+                </div>
+                <div class="header-text text-center">
+                    <a href="{% url 'logout' %}?next={% url 'login' %}">Logout</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+
+{% endblock %}
+
+{% block content %}
+
+<div class="h1 ">
+    Points:
+
+    <span style='color:red'>{{ todo }}</span>
+    /
+    <span style='color: #EE0'>{{ in_progress }}</span>
+    /
+    <span style='color:green'>{{ done }}</span>
+    /
+    {{ total_points }}
+</div>
+
+<br>
+
+<div class="task-list-container">
+    <div id="tasks" class="tasks">
+        {% if subtasks %}
+        {% for task_html in subtasks %}
+        {{ task_html }}
+        {% endfor %}
+        {% endif %}
+    </div>
+    <br>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+
+{% load static %}
+<script type="text/javascript" src="{% static 'scrum/js/task.js' %}"></script>
+<script type="text/javascript" src="{% static 'scrum/js/task_list.js' %}"></script>
+<script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', (event) => {
+        make_task_lists_sortable();
+        make_dates_pickable();
+    });
+</script>
+
+{% endblock %}

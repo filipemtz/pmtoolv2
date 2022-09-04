@@ -3,12 +3,12 @@ from django.contrib.auth.models import User
 from django.contrib.auth import login, authenticate
 from django.utils import timezone
 from django.views import generic
-from .models import Project, Task, TaskList, TaskListFeeling, TaskListType, TaskStatus, TaskWorkload
+from .models import Project, Task, TaskList, TaskListFeeling, TaskListType, TaskStatus, TaskWorkload, UserGuiPreferences
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseNotFound
 from django.template import loader
 from django.shortcuts import get_object_or_404, redirect, render
 from typing import Dict, List
-from datetime import datetime
+from datetime import date, datetime
 import matplotlib
 import matplotlib.pyplot as plt
 from matplotlib.ticker import MaxNLocator
@@ -250,6 +250,7 @@ def create_empty_task(request):
         status=TaskStatus.TODO,
         placement=task_list,
         status_update=timezone.now(),
+        responsible=request.user
     )
 
     task.save()
@@ -418,13 +419,21 @@ def create_burndown_chart(request):
 def index(request):
     create_sample_project = False
 
+    preferences, _ = UserGuiPreferences.objects.get_or_create(
+        user=request.user)
+
     if "project_id" not in request.GET:
-        user_projects = Project.objects.filter(team__id=request.user.id)
-        if user_projects.count() > 0:
-            project_id = user_projects.first().id
+        if preferences.selected_project is not None:
+            project = preferences.selected_project
+            project_id = project.id
         else:
-            # user does not have projects
-            create_sample_project = True
+            user_projects = Project.objects.filter(team__id=request.user.id)
+            if user_projects.count() > 0:
+                project = user_projects.first()
+                project_id = project.id
+            else:
+                # user does not have projects
+                create_sample_project = True
     elif (request.GET['project_id'] == 'new'):
         create_sample_project = True
     else:
@@ -435,6 +444,8 @@ def index(request):
         project_id = project.id
 
     project = get_object_or_404(Project, pk=project_id)
+    preferences.selected_project = project
+    preferences.save()
 
     tasks_lists_html = []
 
@@ -644,3 +655,35 @@ def speed_chart(request):
     uri = urllib.parse.quote(buf_as_string)
 
     return render(request, 'scrum/burndown.html', {'data': uri})
+
+
+@login_required
+def my_activities(request):
+    user_tasks = Task.objects.filter(
+        responsible=request.user,
+        placement__task_list_type=TaskListType.SPRINT,
+        placement__end_date__gte=timezone.now()
+    )
+
+    total = 0
+    done = 0
+    todo = 0
+    in_progress = 0
+
+    for t in user_tasks:
+        points = TaskWorkload.as_int(t.workload)
+        total += points
+        if t.status == TaskStatus.DONE:
+            done += points
+        elif t.status == TaskStatus.IN_PROGRESS:
+            in_progress += points
+        else:
+            todo += points
+
+    return render(request, 'scrum/my_activities.html', {
+        "subtasks": [render_task(t) for t in user_tasks],
+        "total_points": total,
+        "todo": todo,
+        "in_progress": in_progress,
+        "done": done,
+    })

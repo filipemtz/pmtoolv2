@@ -147,6 +147,7 @@ class Task(models.Model):
     duration = models.IntegerField(default=0)
     start_date = models.DateField(default=timezone.now, blank=True)
     end_date = models.DateField(default=timezone.now, blank=True)
+    responsible = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
 
     @classmethod
     def highest_priority_task(cls):
@@ -162,3 +163,12 @@ class Task(models.Model):
 
     def __str__(self):
         return f"name='{self.name}' (Priority='{self.priority}', Workload='{self.workload}', list='{self.placement.name}')"
+
+
+class UserGuiPreferences(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    selected_project = models.ForeignKey(
+        Project, on_delete=models.SET_NULL, null=True)
+
+    def __str__(self):
+        return f"(User='{self.user.name}', selected_project='{self.selected_project.name}')"

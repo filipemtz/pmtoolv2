@@ -104,7 +104,6 @@ function remove_project(project_id) {
     }
 }
 
-
 function show_project_editor_form(project_id) {
     $('#spinner-modal').modal('show');
     $.ajax({
