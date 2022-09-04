@@ -1,5 +1,6 @@
 
 function append_new_empty_task_list(project_id) {
+    $('#spinner-modal').modal('show');
     $.ajax({
         method: "POST",
         url: "empty_task_list",
@@ -13,11 +14,15 @@ function append_new_empty_task_list(project_id) {
         make_dates_pickable();
     }).fail(function (data) {
         page_alert('fail', FAIL_CLASS, fadeOutTime = 1);
+    }).always(function (data) {
+        $('#spinner-modal').modal('hide');
     });
 }
 
 
 function append_new_empty_task(task_list_id, bottom_or_top) {
+    $('#spinner-modal').modal('show');
+
     $.ajax({
         method: "POST",
         url: "new_empty_task",
@@ -37,11 +42,15 @@ function append_new_empty_task(task_list_id, bottom_or_top) {
         }
     }).fail(function (data) {
         page_alert('fail', FAIL_CLASS, fadeOutTime = 1);
+    }).always(function (data) {
+        $('#spinner-modal').modal('hide');
     });
 }
 
 
 function update_task_list_from_modal(modal_name, task_list_id) {
+    $('#spinner-modal').modal('show');
+
     $.ajax({
         method: "POST",
         url: "update_task_list",
@@ -63,11 +72,15 @@ function update_task_list_from_modal(modal_name, task_list_id) {
         page_alert('saved', SUCCESS_CLASS, fadeOutTime = 0.5);
     }).fail(function (data) {
         page_alert('fail', FAIL_CLASS, fadeOutTime = 1);
+    }).always(function (data) {
+        $('#spinner-modal').modal('hide');
     });
 }
 
 
 function update_task_list_from_row(task_list_id, toggle_archived) {
+    $('#spinner-modal').modal('show');
+
     form_name = "#task_list_" + task_list_id;
 
     data = {
@@ -95,6 +108,8 @@ function update_task_list_from_row(task_list_id, toggle_archived) {
         page_alert('saved', SUCCESS_CLASS, fadeOutTime = 0.5);
     }).fail(function (data) {
         page_alert('fail', FAIL_CLASS, fadeOutTime = 1);
+    }).always(function (data) {
+        $('#spinner-modal').modal('hide');
     });
 }
 
@@ -109,14 +124,15 @@ function update_task_list(task_list_id, toggle_archived) {
     else {
         update_task_list_from_row(task_list_id, toggle_archived);
     }
-
 }
 
 
 function delete_task_list(task_list_id) {
+
     if (confirm("Tem certeza que deseja remover a lista de tarefas e todas as suas subtarefas?")) {
         form_name = "#task_list_" + task_list_id;
 
+        $('#spinner-modal').modal('show');
         $.ajax({
             method: "POST",
             url: "delete_task_list",
@@ -128,6 +144,8 @@ function delete_task_list(task_list_id) {
             $(form_name).remove();
         }).fail(function (data) {
             page_alert('fail', FAIL_CLASS, fadeOutTime = 1);
+        }).always(function (data) {
+            $('#spinner-modal').modal('hide');
         });
     }
 }
@@ -139,6 +157,7 @@ function update_task_priorities(items) {
 
     task_list = $("#" + items[0]).parent().parent().attr("id");
 
+    $('#spinner-modal').modal('show');
     $.ajax({
         method: "POST",
         url: "update_priorities",
@@ -149,11 +168,15 @@ function update_task_priorities(items) {
         }
     }).fail(function (data) {
         page_alert('fail', FAIL_CLASS, fadeOutTime = 1);
+    }).always(function (data) {
+        $('#spinner-modal').modal('hide');
     });
 }
 
 
 function show_burndown_graph(task_list_id) {
+    $('#spinner-modal').modal('show');
+
     $.ajax({
         method: "POST",
         url: "burndown",
@@ -165,6 +188,8 @@ function show_burndown_graph(task_list_id) {
         $("#burndown-chart-modal-image").html(data);
     }).fail(function (data) {
         page_alert('fail', FAIL_CLASS, fadeOutTime = 1);
+    }).always(function (data) {
+        $('#spinner-modal').modal('hide');
     });
 }
 
@@ -182,7 +207,6 @@ function show_task_list_details_form(task_list_id) {
     }).fail(function (data) {
         page_alert('fail', FAIL_CLASS, fadeOutTime = 1);
     });
-
 }
 
 

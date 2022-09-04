@@ -1,5 +1,7 @@
 
 function add_team_member(project_id) {
+    $('#spinner-modal').modal('show');
+
     $.ajax({
         method: "POST",
         url: "/scrum/project/add_team_member",
@@ -13,11 +15,14 @@ function add_team_member(project_id) {
         page_alert('saved', SUCCESS_CLASS, fadeOutTime = 0.5);
     }).fail(function (data) {
         page_alert('fail', FAIL_CLASS, fadeOutTime = 1);
+    }).always(function (data) {
+        $('#spinner-modal').modal('hide');
     });
 }
 
 
 function remove_user_from_team(project_id, user_id) {
+    $('#spinner-modal').modal('show');
     $.ajax({
         method: "POST",
         url: "/scrum/project/remove_team_member",
@@ -31,11 +36,14 @@ function remove_user_from_team(project_id, user_id) {
         page_alert('removed', SUCCESS_CLASS, fadeOutTime = 0.5);
     }).fail(function (data) {
         page_alert('fail', FAIL_CLASS, fadeOutTime = 1);
+    }).always(function (data) {
+        $('#spinner-modal').modal('hide');
     });
 }
 
 
 function add_new_empty_project() {
+    $('#spinner-modal').modal('show');
     $.ajax({
         method: "POST",
         url: "project/new",
@@ -46,11 +54,14 @@ function add_new_empty_project() {
         page_alert('removed', SUCCESS_CLASS, fadeOutTime = 0.5);
     }).fail(function (data) {
         page_alert('fail', FAIL_CLASS, fadeOutTime = 1);
+    }).always(function (data) {
+        $('#spinner-modal').modal('hide');
     });
 }
 
 
 function save_project(project_id) {
+    $('#spinner-modal').modal('show');
     new_name = $("#project_editor_form").find("#name").val();
     $.ajax({
         method: "POST",
@@ -65,12 +76,15 @@ function save_project(project_id) {
         page_alert('saved', SUCCESS_CLASS, fadeOutTime = 0.5);
     }).fail(function (data) {
         page_alert('fail', FAIL_CLASS, fadeOutTime = 1);
+    }).always(function (data) {
+        $('#spinner-modal').modal('hide');
     });
 }
 
 
 function remove_project(project_id) {
     if (confirm("Are you sure that you want to remove the project and all of its data? This action can't be undone!!")) {
+        $('#spinner-modal').modal('show');
         $.ajax({
             method: "POST",
             url: "project/remove",
@@ -84,12 +98,15 @@ function remove_project(project_id) {
             window.location.replace("/scrum");
         }).fail(function (data) {
             page_alert('fail', FAIL_CLASS, fadeOutTime = 1);
+        }).always(function (data) {
+            $('#spinner-modal').modal('hide');
         });
     }
 }
 
 
 function show_project_editor_form(project_id) {
+    $('#spinner-modal').modal('show');
     $.ajax({
         method: "POST",
         url: "project_details_form",
@@ -101,10 +118,13 @@ function show_project_editor_form(project_id) {
         $("#details-form-placeholder").html(data);
     }).fail(function (data) {
         page_alert('fail', FAIL_CLASS, fadeOutTime = 1);
+    }).always(function (data) {
+        $('#spinner-modal').modal('hide');
     });
 }
 
 function show_team_speed_chart(project_id) {
+    $('#spinner-modal').modal('show');
     $.ajax({
         method: "POST",
         url: "speed_chart",
@@ -116,5 +136,7 @@ function show_team_speed_chart(project_id) {
         $("#burndown-chart-modal-image").html(data);
     }).fail(function (data) {
         page_alert('fail', FAIL_CLASS, fadeOutTime = 1);
+    }).always(function (data) {
+        $('#spinner-modal').modal('hide');
     });
 }
