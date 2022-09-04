@@ -12,6 +12,7 @@ function save_task_from_row(task_id) {
             'name': $(form_name).find('#name').val(),
             'workload': $(form_name).find('#workload').val(),
             'status': $(form_name).find('#status').val(),
+            'responsible': $(form_name).find('#responsible').val(),
         }
     }).done(function (data) {
         $(form_name).replaceWith(data);
@@ -24,7 +25,7 @@ function save_task_from_row(task_id) {
 }
 
 
-function save_task_from_modal(moodal_name, task_id) {
+function save_task_from_modal(modal_name, task_id) {
     form_name = "#task_" + task_id;
 
     $('#spinner-modal').modal('show');
@@ -34,10 +35,11 @@ function save_task_from_modal(moodal_name, task_id) {
         mode: 'same-origin', // Do not send CSRF token to another domain.
         data: {
             'task_id': task_id,
-            'name': $(moodal_name).find('#name').val(),
-            'workload': $(moodal_name).find('#workload').val(),
-            'status': $(moodal_name).find('#status').val(),
-            'observation': $(moodal_name).find("#observation").val(),
+            'name': $(modal_name).find('#name').val(),
+            'workload': $(modal_name).find('#workload').val(),
+            'status': $(modal_name).find('#status').val(),
+            'observation': $(modal_name).find("#observation").val(),
+            'responsible': $(modal_name).find("#responsible").val(),
         }
     }).done(function (data) {
         $(form_name).replaceWith(data);

@@ -1,22 +1,32 @@
 
+import io
+import base64
+import urllib
+import matplotlib
+import seaborn as sns
+from typing import Dict, List
+import matplotlib.pyplot as plt
+from matplotlib.ticker import MaxNLocator
+
 from django.contrib.auth.models import User
 from django.contrib.auth import login, authenticate
 from django.utils import timezone
 from django.views import generic
-from .models import Project, Task, TaskList, TaskListFeeling, TaskListType, TaskStatus, TaskWorkload, UserGuiPreferences
+from .models import (Project, Task, TaskList, TaskListFeeling,
+                     TaskListType, TaskStatus, TaskWorkload, UserGuiPreferences)
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseNotFound
-from django.template import loader
 from django.shortcuts import get_object_or_404, redirect, render
-from typing import Dict, List
-from datetime import date, datetime
-import matplotlib
-import matplotlib.pyplot as plt
-from matplotlib.ticker import MaxNLocator
-import seaborn as sns
-import urllib
-import io
-import base64
 from django.contrib.auth.decorators import login_required
+from datetime import datetime
+from django.template import loader
+
+'''
+Things to improve: 
+* Some operations are highly inefficient, e.g., for a query is performed 
+for each task to return the team members.
+* Split models and views in multiple files.
+* Add tests.
+'''
 
 matplotlib.use('Agg')
 sns.set_style('whitegrid')
@@ -44,16 +54,26 @@ task_templates = {
 
 def render_task(task: Task) -> str:
     onselect_event = f"save_task({task.id});"
+
     status_selector_html = status_selector(
         selected_value=task.status, onselect_event=onselect_event)
+
     workload_selector_html = workload_selector(
         selected_value=task.workload, onselect_event=onselect_event)
+
     task_template = task_templates[task.placement.task_list_type]
+
+    team_member_selector_html = team_member_selector(
+        task,
+        selected_value=task.responsible,
+        onselect_event=onselect_event
+    )
 
     task_html = loader.get_template(f'scrum/{task_template}').render({
         "task": task,
         "workload_selector_html": workload_selector_html,
         "status_selector_html": status_selector_html,
+        "team_member_selector_html": team_member_selector_html,
     })
 
     return task_html
@@ -107,6 +127,22 @@ def status_selector(selected_value: str = '', onselect_event: str = '') -> str:
         selector_class=selector_class,
         onselect_event=onselect_event
     )
+
+
+def team_member_selector(task: Task, selected_value: User, onselect_event: str = '') -> str:
+    team = task.placement.project.team.all()
+
+    options = [
+        {
+            'name': user.username,
+            'value': user.id,
+            'selected': selected_value.id == user.id
+        }
+        for user in team
+    ]
+
+    return render_selector(
+        options, name='responsible', id='responsible', onselect_event=onselect_event)
 
 
 def feeling_selector(selected_value: str = '', onselect_event: str = '') -> str:
@@ -177,6 +213,7 @@ def update_task(request):
     task = get_object_or_404(Task, id=request.POST['task_id'])
     task.name = request.POST['name']
     task.workload = request.POST['workload']
+    task.responsible = User.objects.get(id=request.POST['responsible'])
 
     if task.status != request.POST['status']:
         task.status = request.POST['status']
@@ -204,14 +241,21 @@ def get_task(request, task_id: int):
 def task_details_form(request):
     task = get_object_or_404(Task, id=request.POST['task_id'])
     onselect_event = f"save_task({task.id});"
+
     status_selector_html = status_selector(
         selected_value=task.status, onselect_event=onselect_event)
+
     workload_selector_html = workload_selector(
         selected_value=task.workload, onselect_event=onselect_event)
+
+    team_member_selector_html = team_member_selector(
+        task, selected_value=task.responsible, onselect_event=onselect_event)
+
     return render(request, 'scrum/task-details.html', {
         'task': task,
         "workload_selector_html": workload_selector_html,
         "status_selector_html": status_selector_html,
+        "team_member_selector_html": team_member_selector_html,
     })
 
 

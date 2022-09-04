@@ -34,3 +34,4 @@ The best resources I found are the following:
 
 * [Mozilla Dev Django Tutorial](https://developer.mozilla.org/en-US/docs/Learn/Server-side/Django/Authentication)
 * [Django Tutorial](https://docs.djangoproject.com/en/4.0/intro/tutorial01/)
+
