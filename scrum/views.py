@@ -621,12 +621,17 @@ def speed_chart(request):
         project=project, task_list_type=TaskListType.SPRINT)
 
     sprint_dates = [s.end_date for s in sprints]
-    team_speed = [s.n_points_completed() for s in sprints]
+    team_speed = [s.total_points() for s in sprints]
 
     fig, ax = plt.subplots(figsize=(10, 5))
     ax.plot(sprint_dates, team_speed, marker='o')
+
     ax.set_ylabel('Total Task Points')
     ax.set_xlabel('Sprint Date')
+    for tick in ax.get_xticklabels():
+        tick.set_rotation(30)
+        tick.set_ha("center")
+
     ax.yaxis.set_major_locator(MaxNLocator(integer=True))
     ax.legend(['Team'])
     plt.tight_layout()
