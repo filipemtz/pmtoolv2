@@ -4,7 +4,7 @@ import base64
 import urllib
 import matplotlib
 import seaborn as sns
-from typing import Dict, List
+from typing import Dict, List, Optional
 import matplotlib.pyplot as plt
 from matplotlib.ticker import MaxNLocator
 
@@ -21,11 +21,15 @@ from datetime import datetime
 from django.template import loader
 
 '''
+##############################################################################
 Things to improve: 
 * Some operations are highly inefficient, e.g., for a query is performed 
 for each task to return the team members.
+* Set the user that is logged in as responsible for tasks when the actual 
+responsible is removed from the team.
 * Split models and views in multiple files.
 * Add tests.
+##############################################################################
 '''
 
 matplotlib.use('Agg')
@@ -52,7 +56,7 @@ task_templates = {
 }
 
 
-def render_task(task: Task) -> str:
+def render_task(task: Task, team: Optional[List[User]] = None) -> str:
     onselect_event = f"save_task({task.id});"
 
     status_selector_html = status_selector(
@@ -63,8 +67,11 @@ def render_task(task: Task) -> str:
 
     task_template = task_templates[task.placement.task_list_type]
 
+    if team is None:
+        team = task.placement.project.team.all()
+
     team_member_selector_html = team_member_selector(
-        task,
+        team,
         selected_value=task.responsible,
         onselect_event=onselect_event
     )
@@ -129,9 +136,7 @@ def status_selector(selected_value: str = '', onselect_event: str = '') -> str:
     )
 
 
-def team_member_selector(task: Task, selected_value: User, onselect_event: str = '') -> str:
-    team = task.placement.project.team.all()
-
+def team_member_selector(team: List[User], selected_value: User, onselect_event: str = '') -> str:
     options = [
         {
             'name': user.username,
@@ -248,8 +253,9 @@ def task_details_form(request):
     workload_selector_html = workload_selector(
         selected_value=task.workload, onselect_event=onselect_event)
 
+    team = task.placement.project.team.all()
     team_member_selector_html = team_member_selector(
-        task, selected_value=task.responsible, onselect_event=onselect_event)
+        team, selected_value=task.responsible, onselect_event=onselect_event)
 
     return render(request, 'scrum/task-details.html', {
         'task': task,
@@ -304,7 +310,8 @@ def create_empty_task(request):
 
 def render_task_list(task_list: TaskList, template: str) -> str:
     subtasks = Task.objects.filter(placement=task_list)
-    subtasks_html = [render_task(t) for t in subtasks]
+    team = task_list.project.team.all()
+    subtasks_html = [render_task(t, team) for t in subtasks]
     feeling = feeling_selector(
         task_list.feeling,
         onselect_event=f"update_task_list({task_list.id}, false);"

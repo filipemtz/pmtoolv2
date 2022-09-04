@@ -25,6 +25,3 @@ function load_project_scrum(project_id) {
     window.location.replace("/scrum?project_id=" + project_id);
 }
 
-function show_my_activities() {
-
-}
