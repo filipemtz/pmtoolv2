@@ -23,11 +23,12 @@ from django.template import loader
 '''
 ##############################################################################
 Things to improve: 
-* Some operations are highly inefficient, e.g., for a query is performed 
-for each task to return the team members.
 * Set the user that is logged in as responsible for tasks when the actual 
 responsible is removed from the team.
 * Split models and views in multiple files.
+* Consistency issues, e.g., the point counts of task lists are not updated when 
+task workloads are changed.
+* Show individual speed-chart.
 * Add tests.
 ##############################################################################
 '''
