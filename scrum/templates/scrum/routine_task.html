@@ -9,10 +9,13 @@
     <div class="task-workload col-1 center">
         {{ workload_selector_html }}
     </div>
+    <div class="task-responsible col-1 center">
+        {{ team_member_selector_html }}
+    </div>
     <div class="task-status col-1 center">
         <div style="visibility: hidden;"> {{ status_selector_html }} </div>
     </div>
-    <div class="task-buttons col-2 center">
+    <div class="task-buttons col-1 center">
         {% if task.observation %}
         <button class="btn my-icon-class" onclick="show_details_form({{ task.id }});" data-bs-toggle="modal"
             data-bs-target="#details-editor-modal" title="edit" style="color: blue">

@@ -69,6 +69,7 @@ def render_task(task: Task, team: Optional[List[User]] = None) -> str:
     task_template = task_templates[task.placement.task_list_type]
 
     if team is None:
+        # highly inefficient
         team = task.placement.project.team.all()
 
     team_member_selector_html = team_member_selector(
@@ -138,11 +139,15 @@ def status_selector(selected_value: str = '', onselect_event: str = '') -> str:
 
 
 def team_member_selector(team: List[User], selected_value: User, onselect_event: str = '') -> str:
+    responsible_id = -1
+    if selected_value is not None:
+        responsible_id = selected_value.id
+     
     options = [
         {
             'name': user.username,
             'value': user.id,
-            'selected': selected_value.id == user.id
+            'selected': responsible_id == user.id
         }
         for user in team
     ]
@@ -414,6 +419,7 @@ def empty_task_list(request):
                 status=TaskStatus.TODO,
                 placement=task_list,
                 status_update=timezone.now(),
+                responsible=request.user
             )
 
             task.save()
@@ -453,6 +459,9 @@ def create_burndown_chart(request):
     ax.plot(desired_chart_x, desired_chart_y, '--', marker='o')
     ax.set_ylabel('Task Points')
     ax.set_xlabel('Date')
+    for tick in ax.get_xticklabels():
+        tick.set_rotation(30)
+        tick.set_ha("center")
     ax.yaxis.set_major_locator(MaxNLocator(integer=True))
     ax.legend(['real', 'desired'])
     plt.tight_layout()
