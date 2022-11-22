@@ -16,17 +16,23 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+if not Path("config.json").exists():
+    raise FileNotFoundError("Copy and edit the config-sample.json file into config.json .")
+
+with open("config.json", "r") as f:
+    data = json.load(f)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-kz5z1816#gf4e*b7e^13by+ens4!5$i_dstjf(@s&(&ddznf*!'
+SECRET_KEY = data['secret_key'] # 'django-insecure-kz5z1816#gf4e*b7e^13by+ens4!5$i_dstjf(@s&(&ddznf*!'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+
+ALLOWED_HOSTS = data['allowed_hosts']
 
 
 # Application definition
@@ -75,11 +81,6 @@ WSGI_APPLICATION = 'pmtoolv2.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
-if not Path("config.json").exists():
-    raise FileNotFoundError("Copy and edit the config-sample.json file into config.json .")
-
-with open("config.json", "r") as f:
-    data = json.load(f)
 
 DATABASES = {
     'default': {

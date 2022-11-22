@@ -1,3 +1,4 @@
 {
-    "db": "<PATH TO DATABASE FILE>"
-}
+    "db": "<PATH TO DATABASE FILE>",
+    "secret_key": "<KEY>",
+    "allowed_hosts": ["<HOSTS>"]
