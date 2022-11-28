@@ -1,4 +1,7 @@
 {
     "db": "<PATH TO DATABASE FILE>",
     "secret_key": "<KEY>",
-    "allowed_hosts": ["<HOSTS>"]
+    "allowed_hosts": [
+        "<HOSTS>"
+    ]
+}

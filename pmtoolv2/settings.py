@@ -17,7 +17,8 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 if not Path("config.json").exists():
-    raise FileNotFoundError("Copy and edit the config-sample.json file into config.json .")
+    raise FileNotFoundError(
+        "Copy and edit the config-sample.json file into config.json .")
 
 with open("config.json", "r") as f:
     data = json.load(f)
@@ -26,7 +27,7 @@ with open("config.json", "r") as f:
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = data['secret_key'] # 'django-insecure-kz5z1816#gf4e*b7e^13by+ens4!5$i_dstjf(@s&(&ddznf*!'
+SECRET_KEY = data['secret_key']
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
