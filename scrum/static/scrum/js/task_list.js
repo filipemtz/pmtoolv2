@@ -3,7 +3,7 @@ function append_new_empty_task_list(project_id) {
     $('#spinner-modal').modal('show');
     $.ajax({
         method: "POST",
-        url: "empty_task_list",
+        url: "/scrum/empty_task_list",
         mode: 'same-origin', // Do not send CSRF token to another domain.
         data: {
             'project_id': project_id,
@@ -25,7 +25,7 @@ function append_new_empty_task(task_list_id, bottom_or_top) {
 
     $.ajax({
         method: "POST",
-        url: "new_empty_task",
+        url: "/scrum/new_empty_task",
         mode: 'same-origin', // Do not send CSRF token to another domain.
         data: {
             'task_list_id': task_list_id,
@@ -53,7 +53,7 @@ function update_task_list_from_modal(modal_name, task_list_id) {
 
     $.ajax({
         method: "POST",
-        url: "update_task_list",
+        url: "/scrum/update_task_list",
         mode: 'same-origin', // Do not send CSRF token to another domain.
         data: {
             'task_list_id': task_list_id,
@@ -98,13 +98,15 @@ function update_task_list_from_row(task_list_id, toggle_archived) {
 
     $.ajax({
         method: "POST",
-        url: "update_task_list",
+        url: "/scrum/update_task_list",
         mode: 'same-origin', // Do not send CSRF token to another domain.
         data: data
     }).done(function (data) {
         $(form_name).replaceWith(data);
         make_task_lists_sortable();
         make_div_dates_pickable(form_name);
+        if (toggle_archived)
+            location.reload();
         page_alert('saved', SUCCESS_CLASS, fadeOutTime = 0.5);
     }).fail(function (data) {
         page_alert('fail', FAIL_CLASS, fadeOutTime = 1);
@@ -135,7 +137,7 @@ function delete_task_list(task_list_id) {
         $('#spinner-modal').modal('show');
         $.ajax({
             method: "POST",
-            url: "delete_task_list",
+            url: "/scrum/delete_task_list",
             mode: 'same-origin', // Do not send CSRF token to another domain.
             data: {
                 'task_list_id': task_list_id,
@@ -160,7 +162,7 @@ function update_task_priorities(items) {
     $('#spinner-modal').modal('show');
     $.ajax({
         method: "POST",
-        url: "update_priorities",
+        url: "/scrum/update_priorities",
         mode: 'same-origin', // Do not send CSRF token to another domain.
         data: {
             'task_list_id': task_list,
@@ -179,7 +181,7 @@ function show_burndown_graph(task_list_id) {
 
     $.ajax({
         method: "POST",
-        url: "burndown",
+        url: "/scrum/burndown",
         mode: 'same-origin', // Do not send CSRF token to another domain.
         data: {
             'task_list_id': task_list_id,
@@ -197,7 +199,7 @@ function show_burndown_graph(task_list_id) {
 function show_task_list_details_form(task_list_id) {
     $.ajax({
         method: "POST",
-        url: "task_list_details_form",
+        url: "/scrum/task_list_details_form",
         mode: 'same-origin', // Do not send CSRF token to another domain.
         data: {
             'task_list_id': task_list_id,

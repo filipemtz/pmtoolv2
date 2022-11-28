@@ -1,0 +1,17 @@
+li {
+    padding-bottom: 20px;
+}
+
+li label {
+    width: 100%;
+    font-weight: bold;
+}
+
+li input[type="text"],
+li input[type="email"],
+li input[type="password"],
+li textarea,
+.helptext {
+
+    width: 100%;
+}

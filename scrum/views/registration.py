@@ -1,5 +1,7 @@
 
-
+from typing import List
+from django.urls import reverse
+from django.views import generic
 from django.contrib.auth.models import User
 from django.contrib.auth import login, authenticate
 from django.shortcuts import redirect, render
@@ -62,3 +64,14 @@ def signup_form(request):
     return render(request, 'registration/signup.html', {
         'error_msgs': error_msgs
     })
+
+
+class UserUpdateView(generic.UpdateView):
+    model = User
+    fields = ['username', 'first_name', 'last_name', 'email']
+
+    def get_template_names(self) -> List[str]:
+        return ['scrum/user_form.html'] + super().get_template_names()
+
+    def get_success_url(self):
+        return reverse('index')

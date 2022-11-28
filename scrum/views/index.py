@@ -46,11 +46,16 @@ def index(request):
     tasks_lists_html = []
 
     sprints = TaskList.objects.filter(
-        project=project, task_list_type=TaskListType.SPRINT)
+        project=project, task_list_type=TaskListType.SPRINT, archived=False)
 
     if len(sprints) > 0:
         tasks_lists_html.append(render_task_list(
             sprints[0], 'scrum/sprint.html'))
+
+    for i in range(1, len(sprints)):
+        t = sprints[i]
+        tasks_lists_html.append(
+            render_task_list(t, 'scrum/sprint.html'))
 
     backlog = TaskList.objects.filter(
         project=project, task_list_type=TaskListType.BACKLOG).first()
@@ -64,15 +69,11 @@ def index(request):
         tasks_lists_html.append(render_task_list(
             routine, 'scrum/routine.html'))
 
-    for i in range(1, len(sprints)):
-        t = sprints[i]
-        tasks_lists_html.append(
-            render_task_list(t, 'scrum/sprint.html'))
-
     project_select_html = project_selector(request.user, project_id)
 
     return render(request, 'scrum/index.html', {
         'project': project,
         'project_selector': project_select_html,
         'task_lists_html': tasks_lists_html,
+        'active_page': 'index'
     })

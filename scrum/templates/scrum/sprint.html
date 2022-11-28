@@ -59,8 +59,6 @@
         </div>
     </div>
 
-    {% if not task_list.archived %}
-
     <div id="tasks" class="tasks">
         {% if subtasks %}
         {% for task_html in subtasks %}
@@ -68,8 +66,6 @@
         {% endfor %}
         {% endif %}
     </div>
-
-    {% endif %}
 
     <br>
 </div>

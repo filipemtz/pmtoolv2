@@ -8,6 +8,7 @@ urlpatterns = [
     # users
     path('accounts/', include('django.contrib.auth.urls')),
     path('signup', views.signup_form, name="signup"),
+    path('edit/<int:pk>', views.UserUpdateView.as_view(), name="edit-profile"),
     # projects
     path('projects', views.ProjectListView.as_view(), name="projects"),
     path('project/<int:pk>', views.ProjectDetailView.as_view(), name="project"),
@@ -20,6 +21,8 @@ urlpatterns = [
     path('project/remove', views.remove_project, name="remove_project"),
     path('project_details_form', views.project_details_form,
          name='project_details_form'),
+    path('project/<int:pk>/archive',
+         views.project_archived_sprints, name="project-archive"),
     # tasks
     path('new_empty_task', views.create_empty_task, name='new_empty_task'),
     path('task/<int:task_id>', views.get_task, name='task'),

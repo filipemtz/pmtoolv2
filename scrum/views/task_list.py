@@ -13,6 +13,7 @@ from django.template import loader
 from scrum.models import (Project, Task, TaskList, TaskListFeeling,
                           TaskListType, TaskStatus, TaskWorkload)
 
+from scrum.views.project import project_selector
 from scrum.views.components import render_selector, render_image_selector
 
 task_templates = {
@@ -377,4 +378,30 @@ def my_activities(request):
         "todo": todo,
         "in_progress": in_progress,
         "done": done,
+    })
+
+
+def project_archived_sprints(request, pk):
+    project = get_object_or_404(Project, pk=pk)
+
+    tasks_lists_html = []
+
+    sprints = TaskList.objects.filter(
+        project=project,
+        task_list_type=TaskListType.SPRINT,
+        archived=True
+    )
+
+    for i in range(1, len(sprints)):
+        t = sprints[i]
+        tasks_lists_html.append(
+            render_task_list(t, 'scrum/sprint.html'))
+
+    project_select_html = project_selector(request.user, pk)
+
+    return render(request, 'scrum/index.html', {
+        'project': project,
+        'project_selector': project_select_html,
+        'task_lists_html': tasks_lists_html,
+        'active_page': 'archive'
     })

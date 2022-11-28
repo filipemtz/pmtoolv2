@@ -1,7 +1,7 @@
 
 from .charts import create_burndown_chart, speed_chart
 from .components import render_selector, render_image_selector
-from .registration import signup_form, signup_user
+from .registration import signup_form, signup_user, UserUpdateView
 from .index import index
 
 from .project import (
@@ -35,5 +35,6 @@ from .task_list import (
     update_task_list,
     delete_task_list,
     empty_task_list,
-    my_activities
+    my_activities,
+    project_archived_sprints
 )

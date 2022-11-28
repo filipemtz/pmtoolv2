@@ -87,7 +87,7 @@ function remove_project(project_id) {
         $('#spinner-modal').modal('show');
         $.ajax({
             method: "POST",
-            url: "project/remove",
+            url: "/scrum/project/remove",
             mode: 'same-origin', // Do not send CSRF token to another domain.
             data: {
                 "project_id": project_id,
@@ -108,7 +108,7 @@ function show_project_editor_form(project_id) {
     $('#spinner-modal').modal('show');
     $.ajax({
         method: "POST",
-        url: "project_details_form",
+        url: "/scrum/project_details_form",
         mode: 'same-origin', // Do not send CSRF token to another domain.
         data: {
             'project_id': project_id,
@@ -126,7 +126,7 @@ function show_team_speed_chart(project_id) {
     $('#spinner-modal').modal('show');
     $.ajax({
         method: "POST",
-        url: "speed_chart",
+        url: "/scrum/speed_chart",
         mode: 'same-origin', // Do not send CSRF token to another domain.
         data: {
             'project_id': project_id,

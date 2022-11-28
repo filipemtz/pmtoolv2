@@ -5,7 +5,7 @@ function save_task_from_row(task_id) {
     $('#spinner-modal').modal('show');
     $.ajax({
         method: "POST",
-        url: "update_task",
+        url: "/scrum/update_task",
         mode: 'same-origin', // Do not send CSRF token to another domain.
         data: {
             'task_id': task_id,
@@ -31,7 +31,7 @@ function save_task_from_modal(modal_name, task_id) {
     $('#spinner-modal').modal('show');
     $.ajax({
         method: "POST",
-        url: "update_task",
+        url: "/scrum/update_task",
         mode: 'same-origin', // Do not send CSRF token to another domain.
         data: {
             'task_id': task_id,
@@ -71,7 +71,7 @@ function delete_task(task_id) {
     $('#spinner-modal').modal('show');
     $.ajax({
         method: "POST",
-        url: "delete_task",
+        url: "/scrum/delete_task",
         mode: 'same-origin', // Do not send CSRF token to another domain.
         data: {
             'task_id': task_id,
@@ -89,7 +89,7 @@ function delete_task(task_id) {
 function show_details_form(task_id) {
     $.ajax({
         method: "POST",
-        url: "task_details_form",
+        url: "/scrum/task_details_form",
         mode: 'same-origin', // Do not send CSRF token to another domain.
         data: {
             'task_id': task_id,

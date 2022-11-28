@@ -1,4 +1,4 @@
-{% extends 'scrum/base.html' %}
+{% extends "scrum/base.html" %}
 
 {% block menu %}
 
@@ -31,40 +31,33 @@
 
 {% block content %}
 
-<div class="h1 ">
-    Points:
-
-    <span style='color:red'>{{ todo }}</span>
-    /
-    <span style='color: #EE0'>{{ in_progress }}</span>
-    /
-    <span style='color:green'>{{ done }}</span>
-    /
-    {{ total_points }}
-</div>
-
+<div class="h1">User Profile</div>
 <br>
-
-<div class="task-list-container">
-    <div id="tasks" class="tasks">
-        {% if subtasks %}
-        {% for task_html in subtasks %}
-        {{ task_html }}
-        {% endfor %}
-        {% endif %}
-    </div>
-    <br>
+<br>
+<div>
+    <form action="{% url 'edit-profile' user.id %}" method="post">
+        <ul>
+            {{ form.as_ul }}
+            <li>
+                <input class='btn btn-success' type="submit" value="Save" />
+            </li>
+        </ul>
+    </form>
 </div>
 
 <br>
 
 <a href="{% url 'index' %}">Back</a>
 
+{% load static %}
+<script type="text/javascript" src="{% static 'scrum/js/project.js' %}"></script>
+
 {% endblock %}
 
 {% block scripts %}
 
 {% load static %}
+<link href="{% static 'scrum/css/user_form.css' %}" rel="stylesheet">
 <script type="text/javascript" src="{% static 'scrum/js/task.js' %}"></script>
 <script type="text/javascript" src="{% static 'scrum/js/task_list.js' %}"></script>
 <script type="text/javascript">
