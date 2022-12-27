@@ -31,16 +31,17 @@
         </div>
         {% endif %}
 
-        <div style="padding:2%;">
-            <button id='new_task_button_1' class="btn my-icon-class"
-                onclick="append_new_empty_task({{ task_list.id }}, 'top');">
-                <i class="bi bi-plus-lg" style="border-top: 1px solid;"></i>
-            </button>
-            <button id='new_task_button_2' class="btn my-icon-class"
-                onclick="append_new_empty_task({{ task_list.id }}, 'bottom');">
-                <i class="bi bi-plus-lg" style="border-bottom: 1px solid;"></i>
-            </button>
-        </div>
+    </div>
+
+    <div style="padding:2%;">
+        <button id='new_task_button_1' class="btn my-icon-class"
+            onclick="append_new_empty_task({{ task_list.id }}, 'top');">
+            <i class="bi bi-plus-lg" style="border-top: 1px solid;"></i>
+        </button>
+        <button id='new_task_button_2' class="btn my-icon-class"
+            onclick="append_new_empty_task({{ task_list.id }}, 'bottom');">
+            <i class="bi bi-plus-lg" style="border-bottom: 1px solid;"></i>
+        </button>
     </div>
 
     {% endif %}
