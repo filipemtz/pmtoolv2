@@ -1,5 +1,4 @@
 
-
 from django.utils import timezone
 from django.views import generic
 from django.http import HttpResponse, HttpResponseBadRequest
@@ -115,9 +114,23 @@ def update_project(request):
 def remove_project(request):
     project = get_object_or_404(Project, id=request.POST['project_id'])
     project.delete()
-    return HttpResponse('ok')
+    return HttpResponse('ok')  # is there a better way of doing this?
 
 
 def project_details_form(request):
     project = get_object_or_404(Project, id=request.POST['project_id'])
     return render(request, 'scrum/project_details.html', {'project': project})
+
+
+def project_notes_editor(request, pk):
+    project = get_object_or_404(Project, id=pk)
+
+    if request.method == 'GET':
+        return render(request, 'scrum/project_notes_editor.html', {'project': project})
+    elif request.method == 'POST':
+        if 'notes' in request.POST:
+            project.notes = request.POST['notes']
+            project.save()
+            return HttpResponse('ok')  # is there a better way of doing this?
+
+    return HttpResponseBadRequest()

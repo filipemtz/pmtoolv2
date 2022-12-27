@@ -14,7 +14,8 @@ from .project import (
     new_project,
     update_project,
     remove_project,
-    project_details_form
+    project_details_form,
+    project_notes_editor
 )
 
 from .task_list import (

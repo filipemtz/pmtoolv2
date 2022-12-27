@@ -35,6 +35,13 @@
                     sprint</button>
             </div>
             <div class="p-2">
+                <button class="btn my-icon-class" style="color: white; font-size:14pt" title='project notes'
+                    data-bs-toggle="modal" data-bs-target="#details-editor-modal"
+                    onclick="show_project_notes_editor({{ project.id }});">
+                    <i class="bi bi-sticky"></i>
+                </button>
+            </div>
+            <div class="p-2">
                 <button class="btn my-icon-class" style="color: white; font-size:14pt" title='team speed'
                     data-bs-toggle="modal" data-bs-target="#burndown-chart-modal"
                     onclick="show_team_speed_chart({{ project.id }});">

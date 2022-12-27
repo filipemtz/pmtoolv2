@@ -123,6 +123,7 @@ function show_project_editor_form(project_id) {
 }
 
 function show_team_speed_chart(project_id) {
+    $("#burndown-chart-modal-image").html("");
     $('#spinner-modal').modal('show');
     $.ajax({
         method: "POST",
@@ -137,5 +138,38 @@ function show_team_speed_chart(project_id) {
         page_alert('fail', FAIL_CLASS, fadeOutTime = 1);
     }).always(function (data) {
         $('#spinner-modal').modal('hide');
+    });
+}
+
+function show_project_notes_editor(project_id) {
+    $.ajax({
+        method: "GET",
+        url: "/scrum/project/" + project_id + "/notes",
+        mode: 'same-origin', // Do not send CSRF token to another domain.
+    }).done(function (data) {
+        // refactor the modal name
+        $("#details-form-placeholder").html(data);
+        $("#project_notes_textarea").focus();
+    }).fail(function (data) {
+        page_alert('fail', FAIL_CLASS, fadeOutTime = 1);
+    }).always(function (data) {
+    });
+}
+
+
+function save_project_notes(project_id) {
+    notes = $("#project_notes_textarea").val();
+    $.ajax({
+        method: "POST",
+        url: "/scrum/project/" + project_id + "/notes",
+        mode: 'same-origin', // Do not send CSRF token to another domain.
+        data: {
+            'notes': notes,
+        }
+    }).done(function (data) {
+        page_alert('saved', SUCCESS_CLASS, fadeOutTime = 0.5);
+    }).fail(function (data) {
+        page_alert('fail', FAIL_CLASS, fadeOutTime = 1);
+    }).always(function (data) {
     });
 }

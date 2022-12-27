@@ -23,6 +23,8 @@ urlpatterns = [
          name='project_details_form'),
     path('project/<int:pk>/archive',
          views.project_archived_sprints, name="project-archive"),
+    path('project/<int:pk>/notes',
+         views.project_notes_editor, name="project-notes-editor"),
     # tasks
     path('new_empty_task', views.create_empty_task, name='new_empty_task'),
     path('task/<int:task_id>', views.get_task, name='task'),

@@ -8,6 +8,7 @@ from django.urls import reverse
 class Project(models.Model):
     name = models.CharField(max_length=100)
     team = models.ManyToManyField(User)
+    notes = models.TextField(default='')
 
     def __str__(self):
         return self.name
