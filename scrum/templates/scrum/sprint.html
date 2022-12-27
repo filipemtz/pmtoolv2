@@ -1,11 +1,11 @@
 <div class="task-list-container" id="task_list_{{ task_list.id }}">
-    <div class="task-list-editor d-flex flex-row" style="background-color: springgreen">
+    <div class=" d-flex flex-row task-list-editor" style="background-color: springgreen">
         <div class="first-left-icon">
-            <button id='new_task_button_1' class="btn my-icon-class"
+            <button id='new_task_button_1' class="btn my-icon-class" title="new task on top"
                 onclick="append_new_empty_task({{ task_list.id }}, 'top');">
                 <i class="bi bi-plus-lg" style="border-top: 1px solid;"></i>
             </button>
-            <button id='new_task_button_2' class="btn my-icon-class"
+            <button id='new_task_button_2' class="btn my-icon-class" title="new task on bottom"
                 onclick="append_new_empty_task({{ task_list.id }}, 'bottom');">
                 <i class="bi bi-plus-lg" style="border-bottom: 1px solid;"></i>
             </button>

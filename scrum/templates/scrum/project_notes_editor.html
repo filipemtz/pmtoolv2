@@ -1,5 +1,5 @@
 <div>
-    <textarea name="project_notes_textarea" id="project_notes_textarea" style="width: 100%;" rows="20"
+    <textarea name="project_notes_textarea" id="project_notes_textarea" style="width: 100%" rows="20"
         onkeypress=" if (event.which==13) save_project_notes({{ project.id }});">{% if project %}{{ project.notes }}{% endif %}</textarea>
 </div>
 <br>
