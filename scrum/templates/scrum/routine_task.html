@@ -1,21 +1,18 @@
-<div class="task-view row row-cols-auto sortable draggable" id="task_{{ task.id }}">
-    <div class="task-name col-1 vertical-align-center">
-        #{{ task.id }}
-    </div>
-    <div class="task-name col-7">
+<div class="task-view d-flex flex-row sortable draggable" id="task_{{ task.id }}">
+    <div class="task-name flex-grow-1">
         <input class='form-control-plaintext' type="text" name="name" id="name" style="width:100%;"
             value="{{ task.name }}" onkeypress="if (event.which == 13) save_task({{ task.id }});" />
     </div>
-    <div class="task-workload col-1 center">
+    <div class="task-workload">
         {{ workload_selector_html }}
     </div>
-    <div class="task-responsible col-1 center">
+    <div class="task-responsible">
         {{ team_member_selector_html }}
     </div>
-    <div class="task-status col-1 center">
-        <div style="visibility: hidden;"> {{ status_selector_html }} </div>
+    <div class="task-status d-none">
+        <div> {{ status_selector_html }} </div>
     </div>
-    <div class="task-buttons col-1 center">
+    <div class="task-buttons">
         {% if task.observation %}
         <button class="btn my-icon-class" onclick="show_details_form({{ task.id }});" data-bs-toggle="modal"
             data-bs-target="#details-editor-modal" title="edit" style="color: blue">

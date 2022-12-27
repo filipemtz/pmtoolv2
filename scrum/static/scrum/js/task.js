@@ -100,3 +100,24 @@ function show_details_form(task_id) {
         page_alert('fail', FAIL_CLASS, fadeOutTime = 1);
     });
 }
+
+function toogleTaskStatusButton(task_id) {
+    $("#status_task_" + task_id + " #current").toggle();
+    $("#status_task_" + task_id + " #alternate").toggle();
+}
+
+function toogleTaskStatus(task_id) {
+    //$('#spinner-modal').modal('show');
+    $.ajax({
+        method: "POST",
+        url: "/scrum/task/" + task_id + "/toggle_status",
+        mode: 'same-origin', // Do not send CSRF token to another domain.
+    }).done(function (data) {
+        $("#status_task_" + task_id + " #current").html(data);
+        page_alert('success', SUCCESS_CLASS, fadeOutTime = 0.5);
+    }).fail(function (data) {
+        page_alert('fail', FAIL_CLASS, fadeOutTime = 1);
+    }).always(function (data) {
+        //$('#spinner-modal').modal('hide');
+    });
+}

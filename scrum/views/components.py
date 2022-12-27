@@ -3,8 +3,14 @@ from typing import Dict, List
 from django.template import loader
 
 
-def render_selector(options: List[Dict], name: str, id, onselect_event: str = '', selector_class='') -> str:
-    status_selector_html = loader.get_template('scrum/selector.html').render({
+def render_selector(options: List[Dict], 
+                    name: str, 
+                    id, 
+                    onselect_event: str = '', 
+                    selector_class='',
+                    template='scrum/selector.html'
+                    ) -> str:
+    status_selector_html = loader.get_template(template).render({
         "name": name,
         "id": id,
         "options": options,

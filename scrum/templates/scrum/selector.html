@@ -2,9 +2,9 @@
     onChange="{{ onselect_event }}">
     {% for option in options %}
     {% if option.selected is True %}
-    <option value="{{ option.value }}" class="select_option_selected" selected>{{ option.name }}</option>
+    <option value="{{ option.value }}" class="select_option_selected" selected>{{ option.name | safe }}</option>
     {% else %}
-    <option value="{{ option.value }}" class="select_option">{{ option.name }}</option>
+    <option value="{{ option.value }}" class="select_option">{{ option.name | safe }}</option>
     {% endif %}
     {% endfor %}
 </select>

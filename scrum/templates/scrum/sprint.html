@@ -1,6 +1,6 @@
 <div class="task-list-container" id="task_list_{{ task_list.id }}">
-    <div class="task-list-editor row row-cols-auto" style="background-color: springgreen">
-        <div class="col-1">
+    <div class="task-list-editor d-flex flex-row" style="background-color: springgreen">
+        <div class="first-left-icon">
             <button id='new_task_button_1' class="btn my-icon-class"
                 onclick="append_new_empty_task({{ task_list.id }}, 'top');">
                 <i class="bi bi-plus-lg" style="border-top: 1px solid;"></i>
@@ -11,16 +11,16 @@
             </button>
 
         </div>
-        <div class="col-5">
+        <div class=" flex-grow-1">
             <input class='form-control-plaintext task-list-name' type="text" name="name" id="name"
                 value="{{ task_list.name }}"
                 onkeypress="if (event.which == 13) update_task_list({{ task_list.id }}, false);" />
         </div>
-        <div class="col-1 center vertical-align-center">
+        <div class=" vertical-align-center">
             {{ task_list.n_points_completed }} / {{ task_list.total_points }}
             ({{ task_list.percentual_points_completed }}%)
         </div>
-        <div class="col-3 center">
+        <div>
             <div style="display:inline-block">
                 <!-- each picklable date must have an unique id -->
                 <input class='form-control-plaintext task-list-date center' type="datetime"
@@ -37,7 +37,7 @@
                     onchange="update_task_list({{ task_list.id }}, false);" />
             </div>
         </div>
-        <div class="task-list-buttons col-2">
+        <div class="task-list-buttons">
             <button class="btn my-icon-class" onclick="show_burndown_graph({{ task_list.id }});" data-bs-toggle="modal"
                 data-bs-target="#burndown-chart-modal" title="burndown graph">
                 <i class="bi bi-graph-down"></i>

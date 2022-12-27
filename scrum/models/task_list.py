@@ -34,6 +34,20 @@ class TaskStatus(models.TextChoices):
     IN_REVIEW = 'RV', _('in review')
     DONE = 'DO', _('done')
 
+    @classmethod
+    def as_icon(cls, val: str) -> str:
+        # icons from bootstrap. see https://icons.getbootstrap.com/
+        mapper = {
+            TaskStatus.TODO: "bi-circle",
+            TaskStatus.IN_PROGRESS: "bi-circle-half",
+            TaskStatus.IN_REVIEW: "bi-circle-fill",
+            TaskStatus.DONE: "bi-check-circle-fill",
+        }
+
+        icon_name = mapper[val]
+        icon_html = f" <i class='bi {icon_name}'></i>"
+        return icon_html
+
 
 class TaskListType(models.TextChoices):
     ROUTINE = 'RT', _('routine')

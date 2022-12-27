@@ -1,21 +1,19 @@
 <div class="task-list-container" id="task_list_{{ task_list.id }}">
-    <div class="task-list-editor row row-cols-auto" style="background-color: yellow;">
-        <div class="col-10">
+    <div class="task-list-editor d-flex flex-row" style="background-color: yellow;">
+        <div class="first-left-icon">
+            <button id='new_task_button_1' class="btn my-icon-class"
+                onclick="append_new_empty_task({{ task_list.id }}, 'top');">
+                <i class="bi bi-plus-lg" style="border-top: 1px solid;"></i>
+            </button>
+            <button id='new_task_button_2' class="btn my-icon-class"
+                onclick="append_new_empty_task({{ task_list.id }}, 'bottom');">
+                <i class="bi bi-plus-lg" style="border-bottom: 1px solid;"></i>
+            </button>
+        </div>
+        <div class="flex-grow-1">
             <input class='form-control-plaintext task-list-name' type="text" name="name" id="name"
                 value="{{ task_list.name }}"
                 onkeypress="if (event.which == 13) update_task_list({{ task_list.id }}, false);" />
-        </div>
-        <div class="task-list-buttons col-2">
-            <div style="display:inline-block; vertical-align: middle;">
-                <button id='new_task_button_1' class="btn my-icon-class"
-                    onclick="append_new_empty_task({{ task_list.id }}, 'top');">
-                    <i class="bi bi-plus-lg" style="border-top: 1px solid;"></i>
-                </button>
-                <button id='new_task_button_2' class="btn my-icon-class"
-                    onclick="append_new_empty_task({{ task_list.id }}, 'bottom');">
-                    <i class="bi bi-plus-lg" style="border-bottom: 1px solid;"></i>
-                </button>
-            </div>
         </div>
     </div>
 

@@ -23,33 +23,13 @@ task_templates = {
 }
 
 
-def status_selector(selected_value: str = '', onselect_event: str = '') -> str:
-    all_status = TaskStatus.choices
+def status_selector(task: Task) -> str:
+    icon = TaskStatus.as_icon(task.status)
 
-    selector_class = ''
-    status_options = []
-
-    for s in all_status:
-        selected = selected_value == s[0]
-
-        if selected:
-            selector_class = "status_" + s[0]
-
-        status_options.append({
-            'name': s[1],
-            'value': s[0],
-            'selected': selected
-        })
-
-    selector_class += ' center roundbox'
-
-    return render_selector(
-        status_options,
-        name='status',
-        id='status',
-        selector_class=selector_class,
-        onselect_event=onselect_event
-    )
+    return loader.get_template('scrum/task_status_selector.html').render({
+        'task': task,
+        'status_icon': icon
+    })
 
 
 def team_member_selector(team: List[User], selected_value: User, onselect_event: str = '') -> str:
@@ -139,12 +119,24 @@ def get_task(request, task_id: int):
     return HttpResponse(render_task(task))
 
 
+def task_toggle_status(request, pk):
+    task = get_object_or_404(Task, id=pk)
+
+    if task.status == TaskStatus.TODO.value:
+        task.status = TaskStatus.DONE
+    else:
+        task.status = TaskStatus.TODO
+
+    task.save()
+
+    return HttpResponse(TaskStatus.as_icon(task.status))
+
+
 def task_details_form(request):
     task = get_object_or_404(Task, id=request.POST['task_id'])
     onselect_event = f"save_task({task.id});"
 
-    status_selector_html = status_selector(
-        selected_value=task.status, onselect_event=onselect_event)
+    status_selector_html = status_selector(task=task)
 
     workload_selector_html = workload_selector(
         selected_value=task.workload, onselect_event=onselect_event)
@@ -224,8 +216,7 @@ def render_task_list(task_list: TaskList, template: str) -> str:
 def render_task(task: Task, team: Optional[List[User]] = None) -> str:
     onselect_event = f"save_task({task.id});"
 
-    status_selector_html = status_selector(
-        selected_value=task.status, onselect_event=onselect_event)
+    status_selector_html = status_selector(task)
 
     workload_selector_html = workload_selector(
         selected_value=task.workload, onselect_event=onselect_event)

@@ -1,0 +1,6 @@
+<div class="form-control-plaintext status {{status_css_class}}" href="" role="button" id="status_task_{{task.id}}"
+    onmouseenter="toogleTaskStatusButton({{task.id}})" onmouseleave="toogleTaskStatusButton({{task.id}})"
+    onclick="toogleTaskStatus({{task.id}})">
+    <span id="current">{{status_icon|safe}}</span>
+    <span id="alternate" style="display:none"><i class="bi bi-check-circle"></i></span>
+</div>
