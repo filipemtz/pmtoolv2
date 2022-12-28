@@ -84,7 +84,7 @@ input {
     margin-right: 10%;
 }
 
-.task-name {
+.task-name input {
     padding-left: 10px;
     padding-right: 10px;
 }
