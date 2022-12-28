@@ -96,10 +96,6 @@ def update_task(request):
     task.workload = request.POST['workload']
     task.responsible = User.objects.get(id=request.POST['responsible'])
 
-    if task.status != request.POST['status']:
-        task.status = request.POST['status']
-        task.status_update = timezone.now()
-
     if 'observation' in request.POST:
         task.observation = request.POST['observation']
 
@@ -127,6 +123,7 @@ def task_toggle_status(request, pk):
     else:
         task.status = TaskStatus.TODO
 
+    task.status_update = timezone.now()
     task.save()
 
     return HttpResponse(TaskStatus.as_icon(task.status))
