@@ -35,11 +35,17 @@
                     sprint</button>
             </div>
             <div class="p-2">
-                <button class="btn my-icon-class" style="color: white; font-size:14pt" title='project notes'
+                <div class="btn my-icon-class" style="color: white; font-size:14pt" title='project notes'
                     data-bs-toggle="modal" data-bs-target="#details-editor-modal"
                     onclick="show_project_notes_editor({{ project.id }});">
-                    <i class="bi bi-sticky"></i>
-                </button>
+                    <div id="project_notes_button">
+                        {% if project.notes %}
+                        <i class="bi bi-sticky-fill"></i>
+                        {% else %}
+                        <i class="bi bi-sticky"></i>
+                        {% endif %}
+                    </div>
+                </div>
             </div>
             <div class="p-2">
                 <button class="btn my-icon-class" style="color: white; font-size:14pt" title='team speed'

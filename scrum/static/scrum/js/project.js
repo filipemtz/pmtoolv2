@@ -168,6 +168,15 @@ function save_project_notes(project_id) {
         }
     }).done(function (data) {
         page_alert('saved', SUCCESS_CLASS, fadeOutTime = 0.5);
+
+        // set the proper icon when thare are notes written
+        css_class = "bi-sticky";
+        if (data.length > 0)
+            css_class = "bi-sticky-fill";
+
+        html = '<i class="bi ' + css_class + '"></i>';
+        $("#project_notes_button").html(html);
+
     }).fail(function (data) {
         page_alert('fail', FAIL_CLASS, fadeOutTime = 1);
     }).always(function (data) {

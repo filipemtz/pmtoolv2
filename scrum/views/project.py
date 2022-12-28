@@ -131,6 +131,6 @@ def project_notes_editor(request, pk):
         if 'notes' in request.POST:
             project.notes = request.POST['notes']
             project.save()
-            return HttpResponse('ok')  # is there a better way of doing this?
+            return HttpResponse(project.notes)
 
     return HttpResponseBadRequest()
