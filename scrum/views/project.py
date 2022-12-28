@@ -1,11 +1,13 @@
 
+import random
 from django.utils import timezone
 from django.views import generic
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404,  render
 
-from scrum.models import Project, TaskList, TaskListType
+
+from scrum.models import Project, TaskList, TaskListType, Tag
 from scrum.views.components import render_selector
 
 

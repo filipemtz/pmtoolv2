@@ -7,3 +7,5 @@ from .task_list import (Task,
                         TaskListFeeling,
                         TaskListType)
 from .user_preferences import UserGuiPreferences
+
+from .tag import Tag, TaskTag

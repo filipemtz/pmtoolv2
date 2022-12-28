@@ -34,6 +34,9 @@ urlpatterns = [
     path('delete_task', views.delete_task, name='delete_task'),
     path('task/<int:pk>/toggle_status',
          views.task_toggle_status, name='toggle-status'),
+    # task tags
+    path('task/<int:task_id>/tag/<int:tag_id>/remove',
+         views.delete_task_tag, name='remove-task-tag'),
     # task lists
     path('update_task_list', views.update_task_list, name='update_task_list'),
     path('delete_task_list', views.delete_task_list, name='delete_task_list'),

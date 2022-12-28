@@ -147,3 +147,19 @@ li {
 .first-left-icon {
     padding-right: 20px;
 }
+
+.tag {
+    border-radius: 10px;
+    margin-right: 5px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    padding-right: 5px;
+
+}
+
+.tag_name {
+    vertical-align: middle;
+    padding-top: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
+}

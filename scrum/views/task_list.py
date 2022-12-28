@@ -1,6 +1,6 @@
 
-
-from typing import List, Optional
+import random
+from typing import List, Optional, Tuple
 
 from django.contrib.auth.models import User
 from django.utils import timezone
@@ -11,7 +11,7 @@ from datetime import datetime
 from django.template import loader
 
 from scrum.models import (Project, Task, TaskList, TaskListFeeling,
-                          TaskListType, TaskStatus, TaskWorkload)
+                          TaskListType, TaskStatus, TaskWorkload, Tag, TaskTag)
 
 from scrum.views.project import project_selector
 from scrum.views.components import render_selector, render_image_selector
@@ -90,9 +90,66 @@ def workload_selector(selected_value: str = '', onselect_event: str = ''):
         options, name='workload', id='workload', onselect_event=onselect_event)
 
 
+def random_rgb_color() -> Tuple[int, int, int]:
+    red = random.randint(0, 255)
+    green = random.randint(0, 255)
+    blue = random.randint(0, 255)
+    return (red, green, blue)
+
+
+def text_color_from_bg_color(
+        color: Tuple[int, int, int]) -> Tuple[int, int, int]:
+
+    # If background color is bright, text_color will be black. Otherwise,
+    # it will be white.
+    avg_color = (color[0] + color[1] + color[2]) // 3
+
+    # the threshold was manually calibrated based on qualitative analysis
+    # of the colors
+    if avg_color > 160:
+        text_color = (0, 0, 0)
+    else:
+        text_color = (255, 255, 255)
+
+    return text_color
+
+
+def color_to_rgb_string(color: Tuple[int, int, int]) -> str:
+    return '#%02x%02x%02x' % color
+
+
+def register_tags(tags_from_string: List[str], task: Task):
+    project = task.placement.project
+    tags_in_project = list(Tag.objects.filter(project=project).all())
+
+    for tag in tags_from_string:
+        tag_found = False
+        for existing_tag in tags_in_project:
+            if tag == existing_tag.name:
+                TaskTag(task=task, tag=existing_tag).save()
+                tag_found = True
+                break
+
+        if not tag_found:
+            color = random_rgb_color()
+            text_color = text_color_from_bg_color(color)
+
+            new_tag = Tag(name=tag,
+                          color=color_to_rgb_string(color),
+                          text_color=color_to_rgb_string(text_color),
+                          project=project)
+
+            new_tag.save()
+
+            TaskTag(task=task, tag=new_tag).save()
+
+
 def update_task(request):
     task = get_object_or_404(Task, id=request.POST['task_id'])
-    task.name = request.POST['name']
+
+    tags, text_without_tags = Tag.extract_tags(request.POST['name'])
+
+    task.name = text_without_tags
     task.workload = request.POST['workload']
     task.responsible = User.objects.get(id=request.POST['responsible'])
 
@@ -101,7 +158,25 @@ def update_task(request):
 
     task.save()
 
+    register_tags(tags, task)
+
     return HttpResponse(render_task(task))
+
+
+def delete_task_tag(request, task_id, tag_id):
+    task_tags = TaskTag.objects.filter(task_id=task_id, tag_id=tag_id)
+
+    if task_tags.count() > 0:
+        task_tag = task_tags.first()
+        task_tag.delete()
+
+        # remove the tag if it is not referenced in any other task
+        if TaskTag.objects.filter(tag_id=tag_id).count() == 0:
+            tags = Tag.objects.filter(id=tag_id)
+            if tags.count() > 0:
+                tags.first().delete()
+
+    return HttpResponse()
 
 
 def delete_task(request):
@@ -230,11 +305,15 @@ def render_task(task: Task, team: Optional[List[User]] = None) -> str:
         onselect_event=onselect_event
     )
 
+    tags = TaskTag.objects.filter(task=task).all()
+    tags = [t.tag for t in tags]
+
     task_html = loader.get_template(f'scrum/{task_template}').render({
         "task": task,
         "workload_selector_html": workload_selector_html,
         "status_selector_html": status_selector_html,
         "team_member_selector_html": team_member_selector_html,
+        "tags": tags
     })
 
     return task_html
@@ -249,17 +328,19 @@ def update_priorities(request):
         return HttpResponseNotFound()
 
     task_list_id = request.POST['task_list_id']
-    task_list_id = extract_int_id(task_list_id)
-    task_list = TaskList.objects.get(id=task_list_id)
 
-    sorted_tasks = request.POST.getlist('sorted_tasks[]')
-    ids = [extract_int_id(s) for s in sorted_tasks]
+    if len(task_list_id) > 0:
+        task_list_id = extract_int_id(task_list_id)
+        task_list = TaskList.objects.get(id=task_list_id)
 
-    for i in range(len(ids)):
-        task = Task.objects.get(id=ids[i])
-        task.priority = i + 1
-        task.placement = task_list
-        task.save()
+        sorted_tasks = request.POST.getlist('sorted_tasks[]')
+        ids = [extract_int_id(s) for s in sorted_tasks]
+
+        for i in range(len(ids)):
+            task = Task.objects.get(id=ids[i])
+            task.priority = i + 1
+            task.placement = task_list
+            task.save()
 
     return HttpResponse()
 

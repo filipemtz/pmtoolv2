@@ -38,5 +38,6 @@ from .task_list import (
     empty_task_list,
     my_activities,
     project_archived_sprints,
-    task_toggle_status
+    task_toggle_status,
+    delete_task_tag
 )

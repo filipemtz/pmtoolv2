@@ -121,3 +121,16 @@ function toogleTaskStatus(task_id) {
         //$('#spinner-modal').modal('hide');
     });
 }
+
+function remove_task_tag(task_id, tag_id) {
+    $.ajax({
+        method: "POST",
+        url: "/scrum/task/" + task_id + "/tag/" + tag_id + "/remove",
+        mode: 'same-origin', // Do not send CSRF token to another domain.
+    }).done(function (data) {
+        page_alert('success', SUCCESS_CLASS, fadeOutTime = 0.5);
+        $("#tag_" + task_id + "_" + tag_id).remove();
+    }).fail(function (data) {
+        page_alert('fail', FAIL_CLASS, fadeOutTime = 1);
+    });
+}
