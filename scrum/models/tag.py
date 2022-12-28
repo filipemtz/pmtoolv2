@@ -11,7 +11,6 @@ class Tag(models.Model):
     name = models.CharField(max_length=100)
     color = models.CharField(max_length=16)
     text_color = models.CharField(max_length=16)
-    project = models.ForeignKey(Project, on_delete=models.CASCADE)
     created_at = models.DateTimeField(default=timezone.now)
 
     @classmethod

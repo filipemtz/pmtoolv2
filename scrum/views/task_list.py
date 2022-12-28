@@ -119,12 +119,11 @@ def color_to_rgb_string(color: Tuple[int, int, int]) -> str:
 
 
 def register_tags(tags_from_string: List[str], task: Task):
-    project = task.placement.project
-    tags_in_project = list(Tag.objects.filter(project=project).all())
+    existing_tags = list(Tag.objects.all())
 
     for tag in tags_from_string:
         tag_found = False
-        for existing_tag in tags_in_project:
+        for existing_tag in existing_tags:
             if tag == existing_tag.name:
                 TaskTag(task=task, tag=existing_tag).save()
                 tag_found = True
@@ -133,14 +132,10 @@ def register_tags(tags_from_string: List[str], task: Task):
         if not tag_found:
             color = random_rgb_color()
             text_color = text_color_from_bg_color(color)
-
             new_tag = Tag(name=tag,
                           color=color_to_rgb_string(color),
-                          text_color=color_to_rgb_string(text_color),
-                          project=project)
-
+                          text_color=color_to_rgb_string(text_color))
             new_tag.save()
-
             TaskTag(task=task, tag=new_tag).save()
 
 

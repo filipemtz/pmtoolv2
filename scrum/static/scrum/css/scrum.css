@@ -84,6 +84,11 @@ input {
     margin-right: 10%;
 }
 
+.task-name {
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
 .task-list-name {
     font-weight: bold;
 }
