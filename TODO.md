@@ -1,6 +1,7 @@
 
 # Backlog
 
+* Check if all views are selecting projects, tasks, etc. only for the correct users
 * Change color of tags on project details editor
 * Extracting the team members for each rendered task is highly inefficient
 * The create_project method in views/project.py seems more like a model function. Improve.

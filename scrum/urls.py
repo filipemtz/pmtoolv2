@@ -46,5 +46,7 @@ urlpatterns = [
     path('myactivities', views.my_activities, name="myactivities"),
     # charts
     path('burndown', views.create_burndown_chart, name='create_burndown_chart'),
+    path('personal_speed', views.personal_speed_chart,
+         name='personal_speed_chart'),
     path('speed_chart', views.speed_chart, name="speed_chart"),
 ]

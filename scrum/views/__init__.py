@@ -1,5 +1,5 @@
 
-from .charts import create_burndown_chart, speed_chart
+from .charts import create_burndown_chart, speed_chart, personal_speed_chart
 from .components import render_selector, render_image_selector
 from .registration import signup_form, signup_user, UserUpdateView
 from .index import index
