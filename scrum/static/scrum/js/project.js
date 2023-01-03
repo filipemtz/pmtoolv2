@@ -152,8 +152,7 @@ function show_project_notes_editor(project_id) {
         $("#project_notes_textarea").focus();
     }).fail(function (data) {
         page_alert('fail', FAIL_CLASS, fadeOutTime = 1);
-    }).always(function (data) {
-    });
+    })
 }
 
 
@@ -179,6 +178,5 @@ function save_project_notes(project_id) {
 
     }).fail(function (data) {
         page_alert('fail', FAIL_CLASS, fadeOutTime = 1);
-    }).always(function (data) {
-    });
+    })
 }

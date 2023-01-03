@@ -49,4 +49,8 @@ urlpatterns = [
     path('personal_speed', views.personal_speed_chart,
          name='personal_speed_chart'),
     path('speed_chart', views.speed_chart, name="speed_chart"),
+    # user notes
+    path('user_note', views.user_note, name="user_note"),
+    path('user_note/update/<int:pk>',
+         views.update_user_note, name="user_note_update"),
 ]

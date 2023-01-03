@@ -6,6 +6,6 @@ from .task_list import (Task,
                         TaskList,
                         TaskListFeeling,
                         TaskListType)
-from .user_preferences import UserGuiPreferences
+from .user_preferences import UserGuiPreferences, UserNote
 
 from .tag import Tag, TaskTag
