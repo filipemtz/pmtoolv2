@@ -252,7 +252,7 @@ def create_empty_task(request):
     task = Task(
         name='new task',
         priority=priority,
-        workload=TaskWorkload.SMALL_1,
+        workload=TaskWorkload.EPIC_377,
         status=TaskStatus.TODO,
         placement=task_list,
         status_update=timezone.now(),

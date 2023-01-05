@@ -2,11 +2,7 @@
     <div class="task-status first-left-icon">
         {{ status_selector_html }}
     </div>
-    <div class="task-name flex-grow-1">
-        <input class='form-control-plaintext' type="text" name="name" id="name" style="width:100%;"
-            value="{{ task.name }}" onkeypress="if (event.which == 13) save_task({{ task.id }});" />
-    </div>
-    {% for tag in tags %}
+     {% for tag in tags %}
     <div class="tag" id="tag_{{task.id}}_{{tag.id}}" style="background-color:{{tag.color}}; color:{{tag.text_color}};">
         <span class="tag_name">{{ tag.name }}</span>
         <span class="tag_delete_button">
@@ -15,6 +11,10 @@
         </span>
     </div>
     {% endfor %}
+   <div class="task-name flex-grow-1">
+        <input class='form-control-plaintext' type="text" name="name" id="name" style="width:100%;"
+            value="{{ task.name }}" onkeypress="if (event.which == 13) save_task({{ task.id }});" />
+    </div>
     <div class="task-workload">
         {{ workload_selector_html }}
     </div>
