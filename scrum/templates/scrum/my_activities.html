@@ -31,34 +31,36 @@
 
 {% block content %}
 
-<div class="h1 ">
-    Points:
+<div style="padding-left: 10%; padding-right: 10%;">
+    <div class="h1 center">
+        Points:
 
-    <span style='color:red'>{{ todo }}</span>
-    /
-    <span style='color: #EE0'>{{ in_progress }}</span>
-    /
-    <span style='color:green'>{{ done }}</span>
-    /
-    {{ total_points }}
-</div>
-
-<br>
-
-<div class="task-list-container">
-    <div id="tasks" class="tasks">
-        {% if subtasks %}
-        {% for task_html in subtasks %}
-        {{ task_html }}
-        {% endfor %}
-        {% endif %}
+        <span style='color:red'>{{ todo }}</span>
+        /
+        <span style='color: #EE0'>{{ in_progress }}</span>
+        /
+        <span style='color:green'>{{ done }}</span>
+        /
+        {{ total_points }}
     </div>
+
     <br>
+
+    <div class="task-list-container">
+        <div id="tasks" class="tasks">
+            {% if subtasks %}
+            {% for task_html in subtasks %}
+            {{ task_html }}
+            {% endfor %}
+            {% endif %}
+        </div>
+        <br>
+    </div>
+
+    <br>
+
+    <a href="{% url 'index' %}">Back</a>
 </div>
-
-<br>
-
-<a href="{% url 'index' %}">Back</a>
 
 {% endblock %}
 
