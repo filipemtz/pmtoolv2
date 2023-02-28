@@ -90,7 +90,7 @@ def count_points_per_month(concluded_tasks):
     task_idx = 0
 
     # walk month by month counting the points in each
-    while (month != last_month) or (year != last_year):
+    while (month <= last_month) or (year <= last_year):
         date_value = date(year, month, 1)
         points = 0
 
