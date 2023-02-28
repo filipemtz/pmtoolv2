@@ -1,5 +1,5 @@
 
-from datetime import date, timedelta
+from datetime import date, timedelta, datetime
 import io
 import base64
 import urllib
@@ -83,7 +83,7 @@ def add_month(previous_date):
         month = 1
         year += 1
 
-    return date(year, month, 1)
+    return datetime(year=year, month=month, day=1)
 
 
 def count_points_per_month(concluded_tasks):
@@ -91,7 +91,13 @@ def count_points_per_month(concluded_tasks):
     concluded_tasks = sorted(concluded_tasks, key=lambda x: x.status_update)
 
     first_date = concluded_tasks[0].status_update
-    end_of_month = add_month(date(first_date.year, first_date.month, 1))
+    end_of_month = add_month(
+        datetime(
+            year=first_date.year,
+            month=first_date.month,
+            day=1
+        )
+    )
 
     dates = [end_of_month]
     sum_points = [0]
