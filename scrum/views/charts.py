@@ -1,5 +1,5 @@
 
-from datetime import date
+from datetime import date, timedelta
 import io
 import base64
 import urllib
@@ -110,24 +110,57 @@ def count_points_per_month(concluded_tasks):
     return dates, sum_points
 
 
-def speed_chart(request):
-    project = get_object_or_404(Project, id=request.POST['project_id'])
+def count_points_per_week(concluded_tasks):
+    # sort by time of conclusion
+    concluded_tasks = sorted(concluded_tasks, key=lambda x: x.status_update)
+
+    end_of_week = concluded_tasks[0].status_update + timedelta(days=7)
+    dates = [end_of_week]
+    sum_points = [0]
+
+    for t in concluded_tasks:
+        task_cost = TaskWorkload.as_int(t.workload)
+
+        while t.status_update > end_of_week:
+            end_of_week += timedelta(days=7)
+            dates.append(end_of_week)
+            sum_points.append(0)
+
+        sum_points[-1] += task_cost
+
+    return dates, sum_points
+
+
+def points_by_sprint(project):
     sprints = TaskList.objects.filter(
         project=project,
         task_list_type=TaskListType.SPRINT).order_by('start_date')
 
     if sprints.count() == 0:
+        return [], []
+
+    # To print the points per sprint
+    sprint_dates = [s.end_date for s in sprints]
+    team_speed = [s.total_points() for s in sprints]
+
+    return sprint_dates, team_speed
+
+
+def speed_chart(request):
+    project = get_object_or_404(Project, id=request.POST['project_id'])
+
+    # sprint_dates, team_speed = points_by_sprint(project)
+
+    concluded_tasks = list(Task.objects.filter(
+        placement__project=project,
+        placement__task_list_type=TaskListType.SPRINT,
+        status=TaskStatus.DONE).all()
+    )
+
+    sprint_dates, team_speed = count_points_per_week(concluded_tasks)
+
+    if len(sprint_dates) == 0:
         return HttpResponse("The project does not contain sprints yet.")
-
-    sprint_dates = []
-    team_speed = []
-
-    for s in sprints:
-        points = s.total_points()
-        sprint_dates.append(s.start_date)
-        team_speed.append(points)
-        sprint_dates.append(s.end_date)
-        team_speed.append(points)
 
     fig, ax = plt.subplots(figsize=(10, 5))
     ax.plot(sprint_dates, team_speed, marker='o')
