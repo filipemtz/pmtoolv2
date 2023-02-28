@@ -74,21 +74,31 @@ def create_burndown_chart(request):
     return render(request, 'scrum/burndown.html', {'data': uri})
 
 
+def add_month(date):
+    month = date.month
+    year = date.year
+
+    month += 1
+    if month > 12:
+        month = 1
+        year += 1
+
+    return date(year, month, 1)
+
+
 def count_points_per_month(concluded_tasks):
     # sort by time of conclusion
     concluded_tasks = sorted(concluded_tasks, key=lambda x: x.status_update)
 
     first_date = concluded_tasks[0].status_update
-    end_of_month = \
-        date(first_date.year, first_date.month, 1) + \
-        timedelta(month=1)
+    end_of_month = add_month(date(first_date.year, first_date.month, 1))
 
     dates = [end_of_month]
     sum_points = [0]
 
     for t in concluded_tasks:
         while t.status_update > end_of_month:
-            end_of_month += timedelta(month=1)
+            end_of_month = add_month(end_of_month)
             dates = [end_of_month]
             sum_points = [0]
 
