@@ -83,7 +83,7 @@ def add_month(previous_date):
         month = 1
         year += 1
 
-    return datetime(year=year, month=month, day=1)
+    return datetime(year=year, month=month, day=1, tzinfo=previous_date.tzinfo)
 
 
 def count_points_per_month(concluded_tasks):
@@ -95,7 +95,8 @@ def count_points_per_month(concluded_tasks):
         datetime(
             year=first_date.year,
             month=first_date.month,
-            day=1
+            day=1,
+            tzinfo=concluded_tasks[0].status_update.tzinfo
         )
     )
 
