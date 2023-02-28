@@ -74,46 +74,7 @@ def create_burndown_chart(request):
     return render(request, 'scrum/burndown.html', {'data': uri})
 
 
-def speed_chart(request):
-    project = get_object_or_404(Project, id=request.POST['project_id'])
-    sprints = TaskList.objects.filter(
-        project=project, task_list_type=TaskListType.SPRINT)
-
-    if sprints.count() == 0:
-        return HttpResponse("The project does not contain sprints yet.")
-
-    sprint_dates = [s.end_date for s in sprints]
-    team_speed = [s.total_points() for s in sprints]
-
-    fig, ax = plt.subplots(figsize=(10, 5))
-    ax.plot(sprint_dates, team_speed, marker='o')
-
-    ax.set_ylabel('Total Task Points')
-    ax.set_xlabel('Sprint Date')
-    for tick in ax.get_xticklabels():
-        tick.set_rotation(30)
-        tick.set_ha("center")
-
-    ax.yaxis.set_major_locator(MaxNLocator(integer=True))
-    ax.legend(['Team'])
-    plt.tight_layout()
-
-    # extracted from https://medium.com/@mdhv.kothari99/matplotlib-into-django-template-5def2e159997
-    # extracted from https://spapas.github.io/2021/02/08/django-matplotlib/#:~:text=If%20instead%20of,graph%20directly%C2%A0there!
-    buf = io.BytesIO()
-    fig.savefig(buf, format='png', dpi=300)
-    buf_as_string = base64.b64encode(buf.getvalue()).decode()
-    uri = urllib.parse.quote(buf_as_string)
-
-    return render(request, 'scrum/burndown.html', {'data': uri})
-
-
-def count_points_per_month(request):
-    # users tasks that were concluded
-    concluded_tasks = list(Task.objects.filter(
-        responsible_id=request.user.id,
-        status=TaskStatus.DONE).all())
-
+def count_points_per_month(concluded_tasks):
     # sort by time of conclusion
     concluded_tasks = sorted(concluded_tasks, key=lambda x: x.status_update)
 
@@ -149,8 +110,54 @@ def count_points_per_month(request):
     return dates, sum_points
 
 
+def speed_chart(request):
+    project = get_object_or_404(Project, id=request.POST['project_id'])
+    sprints = TaskList.objects.filter(
+        project=project, task_list_type=TaskListType.SPRINT)
+
+    if sprints.count() == 0:
+        return HttpResponse("The project does not contain sprints yet.")
+
+    sprint_dates = []
+    team_speed = []
+
+    for s in sprints:
+        points = s.total_points()
+        sprint_dates.append(s.start_date)
+        team_speed.append(points)
+        sprint_dates.append(s.end_date)
+        team_speed.append(points)
+
+    fig, ax = plt.subplots(figsize=(10, 5))
+    ax.plot(sprint_dates, team_speed, marker='o')
+
+    ax.set_ylabel('Total Task Points')
+    ax.set_xlabel('Sprint Date')
+    for tick in ax.get_xticklabels():
+        tick.set_rotation(30)
+        tick.set_ha("center")
+
+    ax.yaxis.set_major_locator(MaxNLocator(integer=True))
+    ax.legend(['Team'])
+    plt.tight_layout()
+
+    # extracted from https://medium.com/@mdhv.kothari99/matplotlib-into-django-template-5def2e159997
+    # extracted from https://spapas.github.io/2021/02/08/django-matplotlib/#:~:text=If%20instead%20of,graph%20directly%C2%A0there!
+    buf = io.BytesIO()
+    fig.savefig(buf, format='png', dpi=300)
+    buf_as_string = base64.b64encode(buf.getvalue()).decode()
+    uri = urllib.parse.quote(buf_as_string)
+
+    return render(request, 'scrum/burndown.html', {'data': uri})
+
+
 def personal_speed_chart(request):
-    dates, sum_points = count_points_per_month(request)
+    # users tasks that were concluded
+    concluded_tasks = list(Task.objects.filter(
+        responsible_id=request.user.id,
+        status=TaskStatus.DONE).all())
+
+    dates, sum_points = count_points_per_month(concluded_tasks)
 
     if (len(dates) == 0) or (len(sum_points) == 0):
         return HttpResponse("User has not finished any task so far.")
