@@ -131,7 +131,7 @@ def count_points_per_week(concluded_tasks):
     return dates, sum_points
 
 
-def points_by_sprint(project):
+def points_by_sprint(project, add_start_date=False):
     sprints = TaskList.objects.filter(
         project=project,
         task_list_type=TaskListType.SPRINT).order_by('start_date')
@@ -139,9 +139,15 @@ def points_by_sprint(project):
     if sprints.count() == 0:
         return [], []
 
-    # To print the points per sprint
-    sprint_dates = [s.end_date for s in sprints]
-    team_speed = [s.total_points() for s in sprints]
+    sprint_dates = []
+    team_speed = []
+
+    for s in sprints:
+        points = s.total_points()
+        sprint_dates.append(s.start_date)
+        team_speed.append(points)
+        sprint_dates.append(s.end_date)
+        team_speed.append(points)
 
     return sprint_dates, team_speed
 
@@ -149,15 +155,18 @@ def points_by_sprint(project):
 def speed_chart(request):
     project = get_object_or_404(Project, id=request.POST['project_id'])
 
-    # sprint_dates, team_speed = points_by_sprint(project)
+    sprint_dates, team_speed = points_by_sprint(project, add_start_date=False)
 
-    concluded_tasks = list(Task.objects.filter(
-        placement__project=project,
-        placement__task_list_type=TaskListType.SPRINT,
-        status=TaskStatus.DONE).all()
+    """
+    # alternative visualization:
+    # 
+    sprint_dates, team_speed = count_points_per_week(
+        list(Task.objects.filter(
+            placement__task_list_type=TaskListType.SPRINT,
+            placement__project=project,
+            status=TaskStatus.DONE).all()
     )
-
-    sprint_dates, team_speed = count_points_per_week(concluded_tasks)
+    """
 
     if len(sprint_dates) == 0:
         return HttpResponse("The project does not contain sprints yet.")
