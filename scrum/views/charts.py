@@ -78,34 +78,21 @@ def count_points_per_month(concluded_tasks):
     # sort by time of conclusion
     concluded_tasks = sorted(concluded_tasks, key=lambda x: x.status_update)
 
-    first_month = concluded_tasks[0].status_update.month
-    first_year = concluded_tasks[0].status_update.year
+    first_date = concluded_tasks[0].status_update
+    end_of_month = \
+        date(first_date.year, first_date.month, 1) + \
+        timedelta(month=1)
 
-    last_month = concluded_tasks[-1].status_update.month
-    last_year = concluded_tasks[-1].status_update.year
+    dates = [end_of_month]
+    sum_points = [0]
 
-    month, year = first_month, first_year
-    dates = []
-    sum_points = []
-    task_idx = 0
+    for t in concluded_tasks:
+        while t.status_update > end_of_month:
+            end_of_month += timedelta(month=1)
+            dates = [end_of_month]
+            sum_points = [0]
 
-    # walk month by month counting the points in each
-    while (month <= last_month) or (year <= last_year):
-        date_value = date(year, month, 1)
-        points = 0
-
-        while (concluded_tasks[task_idx].status_update.month == month) and \
-                (concluded_tasks[task_idx].status_update.year == year):
-            points += TaskWorkload.as_int(concluded_tasks[task_idx].workload)
-            task_idx += 1
-
-        sum_points.append(points)
-        dates.append(date_value)
-
-        month = month + 1
-        if month > 12:
-            month = 1
-            year += 1
+        sum_points[-1] += TaskWorkload.as_int(t.workload)
 
     return dates, sum_points
 
