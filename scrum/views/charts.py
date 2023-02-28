@@ -96,7 +96,7 @@ def count_points_per_month(concluded_tasks):
             year=first_date.year,
             month=first_date.month,
             day=1,
-            tzinfo=concluded_tasks[0].status_update.tzinfo
+            tzinfo=first_date.tzinfo
         )
     )
 
@@ -106,8 +106,8 @@ def count_points_per_month(concluded_tasks):
     for t in concluded_tasks:
         while t.status_update > end_of_month:
             end_of_month = add_month(end_of_month)
-            dates = [end_of_month]
-            sum_points = [0]
+            dates.append(end_of_month)
+            sum_points.append(0)
 
         sum_points[-1] += TaskWorkload.as_int(t.workload)
 
@@ -148,8 +148,11 @@ def points_by_sprint(project, add_start_date=False):
 
     for s in sprints:
         points = s.total_points()
-        sprint_dates.append(s.start_date)
-        team_speed.append(points)
+
+        if add_start_date:
+            sprint_dates.append(s.start_date)
+            team_speed.append(points)
+
         sprint_dates.append(s.end_date)
         team_speed.append(points)
 
