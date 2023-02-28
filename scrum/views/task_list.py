@@ -456,7 +456,7 @@ def project_archived_sprints(request, pk):
         archived=True
     )
 
-    for i in range(1, len(sprints)):
+    for i in range(len(sprints)):
         t = sprints[i]
         tasks_lists_html.append(
             render_task_list(t, 'scrum/sprint.html'))
