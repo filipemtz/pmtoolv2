@@ -113,7 +113,8 @@ def count_points_per_month(concluded_tasks):
 def speed_chart(request):
     project = get_object_or_404(Project, id=request.POST['project_id'])
     sprints = TaskList.objects.filter(
-        project=project, task_list_type=TaskListType.SPRINT)
+        project=project,
+        task_list_type=TaskListType.SPRINT).order_by('start_date')
 
     if sprints.count() == 0:
         return HttpResponse("The project does not contain sprints yet.")
