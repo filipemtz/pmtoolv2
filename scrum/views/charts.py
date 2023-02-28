@@ -74,9 +74,9 @@ def create_burndown_chart(request):
     return render(request, 'scrum/burndown.html', {'data': uri})
 
 
-def add_month(date):
-    month = date.month
-    year = date.year
+def add_month(previous_date):
+    month = previous_date.month
+    year = previous_date.year
 
     month += 1
     if month > 12:
